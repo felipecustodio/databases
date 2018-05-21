@@ -3,3 +3,8 @@
   <h1 align="center">SCC0240 - Databases</h1>
   <p align="center">College studies on SCC0240 @ ICMC - University of São Paulo.</p>
 </p>
+
+
+### Credits:
+* Favicon:
+Party by Tommy Lau from the Noun Project

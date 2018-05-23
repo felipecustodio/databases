@@ -5,7 +5,6 @@
 
 -- TIME estava marcado como palavra reservada
 -- na sintaxe do SQL
-
 CREATE TABLE TIMES (
 	NOME VARCHAR2(30) NOT NULL PRIMARY KEY,
 	ESTADO CHAR(2),
@@ -106,9 +105,7 @@ CREATE TABLE UNIFORME (
 		ON DELETE CASCADE
 );
 
--- Todas as tabelas foram criadas com sucesso
-
--- Inserções para teste
+-- Inserções para teste de restrições
 
 -- Testar restrição de tipo de time
 INSERT INTO TIMES (NOME, ESTADO, TIPO, SALDO_GOLS)
@@ -147,11 +144,39 @@ VALUES ('PALMEIRAS', 'palmeiras', 1)
 INSERT INTO JOGA (TIME1, TIME2, CLASSICO)
 VALUES ('PALMEIRAS', 'SAO PAULO', 1)
 
-
-
-
 -- Alterações
 -- a) Mudar cor_principal para multivalorado
+-- Multivalorado = nova tabela
+CREATE TABLE CORES_UNIFORME (
+   UNIFORME_TIME VARCHAR(30) NOT NULL,
+   UNIFORME_TIPO VARCHAR2(12) NOT NULL,
+   UNIFORME_COR VARCHAR(30) NOT NULL,
+
+   CONSTRAINT PK_UNIFORME_CORES PRIMARY KEY (UNIFORME_TIME, UNIFORME_TIPO,UNIFORME_COR),
+
+   CONSTRAINT FK_UNIFORME_CORES FOREIGN KEY (UNIFORME_TIME, UNIFORME_TIPO)
+                         REFERENCES UNIFORME(NOME_TIME, TIPO)
+                         ON DELETE CASCADE
+);
+
+-- Remover atributo cor_principal original
+ALTER TABLE UNIFORME DROP COLUMN COR_PRINCIPAL;
+
 -- b) Inserir atributo atomico endereço na tabela jogador que pode ser nulo
+ALTER TABLE JOGADOR ADD ENDERECO VARCHAR2(30);
+
 -- c) Inserir atributo atomico na tabela jogador com valor default
+ALTER TABLE JOGADOR ADD
+	(
+		STATUS VARCHAR(9),
+		CONSTRAINT CHECK_STATUS CHECK (STATUS IN ('saudavel', 'machucado', 'suspenso'))
+	);
+
 -- d) Remover atributo CPF da tabela jogador
+ALTER TABLE JOGADOR DROP CONSTRAINT PK_JOGADOR;
+ALTER TABLE JOGADOR DROP (CPF);
+-- Tive erros dizendo que a chave é referenciada por outras:
+-- Algum DELETE CASCADE deve ter sido declarado errado!
+-- Precisaria arrumar as tabelas que usam CPF do Jogador
+-- Precisamos de uma chave primária: usar RG?
+ALTER TABLE JOGADOR  ADD CONSTRAINT PK_JOGADOR PRIMARY KEY (RG);

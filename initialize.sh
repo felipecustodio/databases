@@ -1,12 +1,11 @@
-# initialize postgresql (windows/linux)
-
-
-# check if packages are installed
-if python -c "import package_name" &> /dev/null; then
-    echo 'Packages installed.'
-else
-    echo 'Install packages first using pip install -r requirements.txt'
+# script needs sudo
+if [ "$EUID" -ne 0 ]
+then echo "ERROR: Run script as root (sudo)"
+  exit
 fi
 
+# start postgresql
+sudo systemctl start postgresql
+
 # run python script
-python main.py
+python -W ignore main.py

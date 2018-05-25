@@ -1,5 +1,19 @@
 #!/bin/usr/env python3
 # -*- coding: utf-8 -*-
+
+"""
+SCC0240 - Bases de Dados - 2018/1
+ICMC - USP
+Profa. Dra. Elaine Parros M. de Sousa
+
+Alunos:
+Felipe Scrochio Custódio - 9442688
+Gabriel Henrique Campos Scalici - 9292970
+Danilo Moraes Costa - 8921972
+Henrique Martins Loschiavo - 8936972
+"""
+
+
 try:
     import psycopg2
     import eel

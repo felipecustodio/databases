@@ -19,7 +19,8 @@ try:
     import eel
     from termcolor import colored
     from configparser import ConfigParser
-except:
+except Exception as e:
+    print(e)
     print("Pacotes não instalados.")
     print("Instale os pacotes necessários com o seguinte comando:")
     print("pip install -r requirements.txt")
@@ -27,14 +28,11 @@ except:
 # https://github.com/ChrisKnott/Eel
 # http://www.postgresqltutorial.com/postgresql-python/
 
-# http://localhost:8000/
-# eel.init('gui')
 
-
-# @eel.expose
-# def hello_world():
-#     text = colored('HELLO, WORLD! ', 'yellow', attrs=['reverse', 'blink'])
-#     print(text)
+@eel.expose
+def hello_world():
+    text = colored('HELLO, WORLD! ', 'yellow', attrs=['reverse', 'blink'])
+    print(text)
 
 
 def setup(filename='database.ini', section='postgresql'):
@@ -74,9 +72,16 @@ def connect():
         print(text + error)
 
 
-# print("Initializing GUI...")
-# eel.start('index.html', size=(800, 800))
+def main():
+    # inicializar servidor web local
+    eel.init('gui')
+
+    # conectar ao banco de dados
+    connect()
+
+    # abrir interface gráfica
+    eel.start('index.html', size=(800, 800))
 
 
 if __name__ == '__main__':
-    connect()
+    main()

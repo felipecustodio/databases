@@ -68,8 +68,10 @@ def connect():
         print(cursor.fetchone())
 
     except (Exception, psycopg2.DatabaseError) as error:
-        text = colored('ERRO:', 'red', attrs=['reverse', 'blink'])
-        print(text + error)
+        text = colored('ERRO:', 'yellow', attrs=['reverse', 'blink'])
+        print(text + " Conexão ao banco de dados PostgreSQL falhou!")
+        print("")
+        print(str(error))
 
 
 def main():
@@ -80,7 +82,7 @@ def main():
     connect()
 
     # abrir interface gráfica
-    eel.start('index.html', size=(800, 800))
+    eel.start('index.html')
 
 
 if __name__ == '__main__':

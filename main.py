@@ -75,6 +75,14 @@ def connect():
 
 
 def main():
+
+    web_app_options = {
+	'mode': "chrome-app", #or "chrome"
+	'port': 8000,
+        # modo incognito evita problemas com cache
+	'chromeFlags': ["--incognito"]
+    }
+
     # inicializar servidor web local
     eel.init('gui')
 

@@ -19,6 +19,7 @@ try:
     import eel
     from termcolor import colored
     from configparser import ConfigParser
+    import sys
 except Exception as e:
     print(e)
     print("Pacotes não instalados.")
@@ -55,6 +56,8 @@ def connect():
         params = setup()
         print('Conectando ao banco de dados PostgreSQL...')
         connection = psycopg2.connect(**params)
+        # sempre commitar após um comando, assim erros podem ser ignorados, porém exibidos
+        connection.autocommit = True
 
         # criar cursor
         cursor = connection.cursor()
@@ -67,19 +70,49 @@ def connect():
         print("Conexão feita com sucesso. Bem-vindo!")
         print(cursor.fetchone())
 
+        return connection, cursor
+
     except (Exception, psycopg2.DatabaseError) as error:
         text = colored('ERRO:', 'yellow', attrs=['reverse', 'blink'])
         print(text + " Conexão ao banco de dados PostgreSQL falhou!")
         print("")
         print(str(error))
+        sys.exit()
+
+
+def run_sql(connection, cursor, filename):
+    # ler arquivo SQL em um único buffer
+    file = open(filename, 'r')
+    sql = file.read()
+    file.close()
+
+    text = colored('Executando ' + filename, 'green', attrs=['reverse', 'blink'])
+    print(text)
+
+    # obter os comandos separando o arquivo por ';'
+    commands = sql.split(';')
+
+    # executar todos os comandos
+    for command in commands[:-1]:
+        if (len(command) > 0):
+            command = command + ';'
+            try:
+
+                cursor.execute(command)
+            except(Exception, psycopg2.DatabaseError) as error:
+                text = colored('ERRO:', 'yellow', attrs=['reverse', 'blink'])
+                print('\n' + text + command)
+                print('\n' + str(error))
+                print("Pressione qualquer tecla para continuar.", end=' ')
+                input()
 
 
 def main():
 
     web_app_options = {
-	'mode': "chrome-app", #or "chrome"
+	'mode': "chrome-app",
 	'port': 8000,
-        # modo incognito evita problemas com cache
+    # modo incognito evita problemas com cache
 	'chromeFlags': ["--incognito"]
     }
 
@@ -87,11 +120,24 @@ def main():
     eel.init('gui')
 
     # conectar ao banco de dados
-    connect()
+    connection, cursor = connect()
+    run_sql(connection, cursor, 'drop.sql')
+
+    print("Inicializando as tabelas do banco de dados...")
+    run_sql(connection, cursor, 'initialize.sql')
+
+    print("Populando o banco de dados com tuplas iniciais...")
+    run_sql(connection, cursor, 'insert.sql')
+
+    # cursor.execute("""SELECT * from PESSOA""")
 
     # abrir interface gráfica
-    eel.start('index.html')
+    print("Abrindo a interface gráfica...")
+    text = colored('SEJA BEM-VINDO A NEVERLAND!', 'yellow', attrs=['reverse', 'blink'])
+    print('\n' + text)
+    print("Navegue pelo site para conferir as funcionalidades.")
 
+    eel.start('index.html')
 
 if __name__ == '__main__':
     main()

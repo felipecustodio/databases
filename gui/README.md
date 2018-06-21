@@ -40,7 +40,7 @@ x_lbd_free/
 |   ├── js/
 |   ├── fonts/
 |   └── img/
-├── dashboard.html
+├── index.html
 ├── CHANGELOG.md
 ├── documentation
 ├── icons.html

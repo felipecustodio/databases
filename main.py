@@ -97,7 +97,6 @@ def run_sql(connection, cursor, filename):
         if (len(command) > 0):
             command = command + ';'
             try:
-
                 cursor.execute(command)
             except(Exception, psycopg2.DatabaseError) as error:
                 text = colored('ERRO:', 'yellow', attrs=['reverse', 'blink'])
@@ -137,7 +136,12 @@ def main():
     print('\n' + text)
     print("Navegue pelo site para conferir as funcionalidades.")
 
-    eel.start('index.html')
+    try:
+        eel.start('index.html')
+    except (Exception) as e:
+        text = colored('ERRO:', 'red', attrs=['reverse', 'blink'])
+        print('\n' + text + str(e))
+
 
 if __name__ == '__main__':
     main()

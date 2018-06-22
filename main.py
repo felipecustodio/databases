@@ -47,7 +47,7 @@ def select_home():
     global connection
     global cursor
 
-    cursor.execute("SELECT * FROM CLIENTE")
+    cursor.execute("SELECT CPF, NOME, RG FROM CLIENTE")
     clientes = cursor.fetchall()
 
     lista = []

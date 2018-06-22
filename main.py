@@ -16,6 +16,7 @@ Henrique Martins Loschiavo - 8936972
 
 try:
     import psycopg2
+    import json
     import eel
     from termcolor import colored
     from configparser import ConfigParser
@@ -30,13 +31,40 @@ except Exception as e:
 # http://www.postgresqltutorial.com/postgresql-python/
 
 
+# conexão ao banco de dados
+connection = None
+cursor = None
+
+
 @eel.expose
 def hello_world():
     text = colored('HELLO, WORLD! ', 'yellow', attrs=['reverse', 'blink'])
     print(text)
 
+@eel.expose
+def select_home():
+
+    global connection
+    global cursor
+
+    cursor.execute("SELECT * FROM CLIENTE")
+    clientes = cursor.fetchall()
+
+    lista = []
+    for value in clientes:
+        lista.append(str(value))
+    print(lista)
+
+    return lista
+
+
+
 
 def setup(filename='database.ini', section='postgresql'):
+
+    global connection
+    global cursor
+
     """ Configura a conexão ao PostgreSQL """
     """ Utiliza arquivo de configuração database.ini """
     parser = ConfigParser()
@@ -51,6 +79,10 @@ def setup(filename='database.ini', section='postgresql'):
 
 
 def connect():
+
+    global connection
+    global cursor
+
     try:
         # configurar os parâmetros de conexão
         params = setup()
@@ -80,7 +112,11 @@ def connect():
         sys.exit()
 
 
-def run_sql(connection, cursor, filename):
+def run_sql(filename):
+
+    global connection
+    global cursor
+
     # ler arquivo SQL em um único buffer
     file = open(filename, 'r')
     sql = file.read()
@@ -102,11 +138,11 @@ def run_sql(connection, cursor, filename):
                 text = colored('ERRO:', 'yellow', attrs=['reverse', 'blink'])
                 print('\n' + text + command)
                 print('\n' + str(error))
-                print("Pressione qualquer tecla para continuar.", end=' ')
-                input()
-
 
 def main():
+
+    global connection
+    global cursor
 
     web_app_options = {
 	'mode': "chrome-app",
@@ -120,15 +156,13 @@ def main():
 
     # conectar ao banco de dados
     connection, cursor = connect()
-    run_sql(connection, cursor, 'drop.sql')
+    run_sql('drop.sql')
 
     print("Inicializando as tabelas do banco de dados...")
-    run_sql(connection, cursor, 'initialize.sql')
+    run_sql('initialize.sql')
 
     print("Populando o banco de dados com tuplas iniciais...")
-    run_sql(connection, cursor, 'insert.sql')
-
-    # cursor.execute("""SELECT * from PESSOA""")
+    run_sql('insert.sql')
 
     # abrir interface gráfica
     print("Abrindo a interface gráfica...")

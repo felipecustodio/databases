@@ -27,6 +27,9 @@ FROM
   COMIDA
 WHERE
   NOME IS NOT NULL
+
+--- CLIENTES ---
+
   --CLIENTE E TOTAL GASTO
 SELECT
   cliente.nome,
@@ -94,6 +97,7 @@ JOIN (
     comanda.codigo = aluguel.codigo ) alugel_comanda
 ON
   fantasia.codigo_barras = alugel_comanda.codigo_fantasia
+
   -- LISTAR TODAS AS FANTASIAS ALUGADAS E O RESPECTIVO CLIENTE
 SELECT
   fantasia.nome,
@@ -136,6 +140,8 @@ JOIN (
     comanda_cliente.codigo = aluguel.codigo) alugel_comanda_cliente
 ON
   fantasia.codigo_barras = alugel_comanda_cliente.codigo_fantasia
+
+
   --VALOR TOTAL DAS COMANDAS DE CADA FESTA
 SELECT
   festa.dia AS dia,
@@ -158,6 +164,41 @@ ON
 GROUP BY
   dia,
   tipo
+
+
+ --- BEBIDAS ---
+
+--VE BEBIDA QUE MAIS VENDEU, PEGA O NOME, RESOLVE PARA EMPATE
+  SELECT
+  bebida.nome, cod_max.vendas
+FROM
+(SELECT
+  venda.codigo_barras, venda.vendas
+FROM (
+  SELECT
+    MAX(VENDAS) as vendas
+  FROM (
+    SELECT
+      COUNT(codigo_barras) AS vendas,codigo_barras
+    FROM
+      venda_bebida
+     group by codigo_barras) venda) maximo
+  INNER JOIN (
+    SELECT
+      COUNT(codigo_barras) AS vendas,codigo_barras
+    FROM
+      venda_bebida
+     group by codigo_barras) venda
+  ON venda.vendas = maximo.vendas) cod_max
+JOIN (
+  SELECT
+    nome, codigo_barras
+  FROM bebida
+  ) bebida
+ON cod_max.codigo_barras = bebida.codigo_barras
+
+
+
   --VALOR TOTAL DE VENDAS DE BEBIDA EM UM DETERMINADO BAR, EM DETERMINADA FESTA
 SELECT
   festa.dia AS dia,
@@ -185,6 +226,24 @@ ON
 GROUP BY
   festa.dia,
   tipo
+
+--QUANTO CADA BEBIDA VENDEU E QUANTAS VEZES FOI VENDIDA
+  SELECT
+  bebida.nome, venda.vendas
+FROM (
+  SELECT
+    nome, codigo_barras
+  FROM
+    bebida) bebida
+JOIN (
+    SELECT
+      COUNT(codigo_barras) AS vendas,codigo_barras
+    FROM
+      venda_bebida
+     group by codigo_barras) venda
+  on venda.codigo_barras = bebida.codigo_barras
+
+--- PROPRIETARIOS ---
   --LISTAR PROPRIETARIOS E SEUS FOOD TRUCKS
 SELECT
   proprietario.nome AS Prorietario,
@@ -203,3 +262,7 @@ LEFT JOIN (
     food_truck) f
 ON
   proprietario.cpf = f.proprietario
+
+
+--- FUNCIONÁRIOS ---
+

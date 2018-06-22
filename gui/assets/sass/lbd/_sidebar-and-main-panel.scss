@@ -220,7 +220,7 @@
     &[data-color="red"]:after{
         @include icon-gradient($new-red, $red-color-bottom);
     }
-    &[data-color="purple"]:after{
+    &[data-color="red"]:after{
         @include icon-gradient($new-purple, $purple-color-bottom);
     }
 }

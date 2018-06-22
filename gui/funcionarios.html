@@ -7,6 +7,7 @@
 
 	<title>Admin - NeverlandClub</title>
 
+
 	<meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
     <meta name="viewport" content="width=device-width" />
 
@@ -21,8 +22,8 @@
     <link href="assets/css/light-bootstrap-dashboard.css?v=1.4.0" rel="stylesheet"/>
 
 
-    <!--  CSS for Demo Purpose, don't include it in your project     -->
-    <link href="assets/css/demo.css" rel="stylesheet" />
+    
+
 
 
     <!--     Fonts and icons     -->
@@ -31,11 +32,13 @@
     <link href="assets/css/pe-icon-7-stroke.css" rel="stylesheet" />
 </head>
 <body>
+	
+
 
 <div class="wrapper">
-    <div class="sidebar" data-color="purple" data-image="assets/img/sidebar-5.jpg">
+    <div class="sidebar" data-color="red" data-image="assets/img/sidebar-5.jpg">
 
-    <!--   you can change the color of the sidebar using: data-color="blue | azure | green | orange | red | purple" -->
+    
 
 
     	<div class="sidebar-wrapper">
@@ -198,13 +201,13 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>CPF</label>
-                                                <input type="text" class="form-control" placeholder="CPF">
+                                                <input type="text" class="form-control" placeholder="CPF" id="cpf_add_func">
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>Nome</label>
-                                                <input type="text" class="form-control" placeholder="Nome" value="">
+                                                <input type="text" class="form-control" placeholder="Nome" id="nome_add_func">
                                             </div>
                                         </div>
 
@@ -214,13 +217,13 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>RG</label>
-                                                <input type="text" class="form-control" placeholder="RG">
+                                                <input type="text" class="form-control" placeholder="RG" id="rg_add_func">
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>Data Nascimento</label>
-                                                <input type="text" class="form-control" placeholder="RG">
+                                                <input type="text" class="form-control" placeholder="Data Nascimento" id="dataNasc_add_func">
                                             </div>
                                         </div>
                                     </div>
@@ -228,23 +231,23 @@
                                         <div class="col-md-4">
                                             <div class="form-group">
                                                 <label>Carteira de trabalho</label>
-                                                <input type="text" class="form-control" placeholder="Carteira de trabalho">
+                                                <input type="text" class="form-control" placeholder="Carteira de trabalho" id="cart_add_func">
                                             </div>
                                         </div>
                                         <div class="col-md-4">
                                             <div class="form-group">
                                                 <label>Cachê</label>
-                                                <input type="number" class="form-control" placeholder="Cachê">
+                                                <input type="number" class="form-control" placeholder="Cachê" id="cache_add_func">
                                             </div>
                                         </div>
                                         <div class="col-md-4">
                                             <div class="form-group">
                                                 <label>Número do balcão</label>
-                                                <input type="number" class="form-control" placeholder="Balcãoß">
+                                                <input type="number" class="form-control" placeholder="Balcão" id="numbalc_add_func">
                                             </div>
                                         </div>
                                     </div>
-                                    <button type="submit" class="btn btn-info btn-fill pull-right">Inserir</button>
+                                    <button type="submit" onClick=" () => {} " class="btn btn-info btn-fill pull-right">Inserir</button>
                                     <div class="clearfix"></div>
                                 </form>
                             </div>
@@ -268,7 +271,7 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>CPF</label>
-                                                <input type="text" class="form-control" placeholder="CPF">
+                                                <input type="text" class="form-control" placeholder="CPF" id="cpf_rem_func">
                                             </div>
                                         </div>
                                         <div class="col-md-6">
@@ -277,7 +280,7 @@
                                         </div>
                                     </div>
 
-                                    <button type="submit" class="btn btn-info btn-fill pull-right">Remover</button>
+                                    <button type="submit"  onClick=" () => {} " class="btn btn-info btn-fill pull-right">Remover</button>
                                     <div class="clearfix"></div>
                                 </form>
                             </div>
@@ -307,13 +310,13 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>CPF</label>
-                                                <input type="text" class="form-control" placeholder="CPF">
+                                                <input type="text" class="form-control" placeholder="CPF" id="cpf_alt_func">
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>Nome</label>
-                                                <input type="text" class="form-control" placeholder="Nome" value="">
+                                                <input type="text" class="form-control" placeholder="Nome" id="nome_alt_func">
                                             </div>
                                         </div>
 
@@ -323,13 +326,13 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>RG</label>
-                                                <input type="text" class="form-control" placeholder="RG">
+                                                <input type="text" class="form-control" placeholder="RG" id="rg_alt_func">
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>Data Nascimento</label>
-                                                <input type="text" class="form-control" placeholder="RG">
+                                                <input type="text" class="form-control" placeholder="RG" id="dataNasc_alt_func">
                                             </div>
                                         </div>
                                     </div>
@@ -337,23 +340,23 @@
                                         <div class="col-md-4">
                                             <div class="form-group">
                                                 <label>Carteira de trabalho</label>
-                                                <input type="text" class="form-control" placeholder="Carteira de trabalho">
+                                                <input type="text" class="form-control" placeholder="Carteira de trabalho" id="cart_alt_func">
                                             </div>
                                         </div>
                                         <div class="col-md-4">
                                             <div class="form-group">
                                                 <label>Cachê</label>
-                                                <input type="number" class="form-control" placeholder="Cachê">
+                                                <input type="number" class="form-control" placeholder="Cachê" id="cache_alt_func">
                                             </div>
                                         </div>
                                         <div class="col-md-4">
                                             <div class="form-group">
                                                 <label>Número do balcão</label>
-                                                <input type="number" class="form-control" placeholder="Balcãoß">
+                                                <input type="number" class="form-control" placeholder="Balcão">
                                             </div>
                                         </div>
                                     </div>
-                                    <button type="submit" class="btn btn-info btn-fill pull-right">Alterar</button>
+                                    <button type="submit" onClick=" () => {} " class="btn btn-info btn-fill pull-right">Alterar</button>
                                     <div class="clearfix"></div>
                                 </form>
                             </div>
@@ -369,19 +372,19 @@
     <script src="assets/js/jquery.3.2.1.min.js" type="text/javascript"></script>
 	<script src="assets/js/bootstrap.min.js" type="text/javascript"></script>
 
-	<!--  Charts Plugin -->
-	<script src="assets/js/chartist.min.js"></script>
+
+
 
     <!--  Notifications Plugin    -->
     <script src="assets/js/bootstrap-notify.js"></script>
 
-    <!--  Google Maps Plugin    -->
-    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=YOUR_KEY_HERE"></script>
+    
+    
 
     <!-- Light Bootstrap Table Core javascript and methods for Demo purpose -->
 	<script src="assets/js/light-bootstrap-dashboard.js?v=1.4.0"></script>
 
-	<!-- Light Bootstrap Table DEMO methods, don't include it in your project! -->
-	<script src="assets/js/demo.js"></script>
+	
+	
 
 </html>

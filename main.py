@@ -41,23 +41,36 @@ def hello_world():
     text = colored('HELLO, WORLD! ', 'yellow', attrs=['reverse', 'blink'])
     print(text)
 
-@eel.expose
-def select_home():
 
+@eel.expose
+def select(table, columns):
     global connection
     global cursor
 
-    cursor.execute("SELECT CPF, NOME, RG FROM CLIENTE")
-    clientes = cursor.fetchall()
+    # "SELECT columns[0] columns[1] ... FROM table"
+    columns_content = ""
+    for index, value in enumerate(columns):
+        if (index < len(columns) - 1):
+            columns_content += str(value) + ", "
+        else:
+            columns_content += str(value)
 
-    lista = []
-    for value in clientes:
-        lista.append(str(value))
-    print(lista)
+    # parsear columns
+    query = "SELECT " + columns_content +  " FROM " + table
+    print("QUERY: {}".format(query))
 
-    return lista
+    cursor.execute(query)
+    result = cursor.fetchall()
 
+    # formatar esse resultado
+    results = []
+    print("Resultado do SELECT: ")
+    for value in result:
+        results.append(str(value))
+        print(value, end=", ")
+    print("\n")
 
+    return results
 
 
 def setup(filename='database.ini', section='postgresql'):

@@ -80,7 +80,7 @@ def select(table, columns):
 
 
 @eel.expose
-def insert(table, columns, values):
+def insert(table, values):
     global connection
     global cursor
 

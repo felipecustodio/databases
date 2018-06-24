@@ -185,13 +185,13 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>Dia</label>
-                                                <input type="text" class="form-control" placeholder="CPF" id="cpf_add_cli">
+                                                <input type="text" class="form-control" placeholder="Dia" id="dia_add_fest">
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>Hora</label>
-                                                <input type="text" class="form-control" placeholder="Nome" id="nome_add_cli">
+                                                <input type="text" class="form-control" placeholder="Hora" id="hora_add_fest">
                                             </div>
                                         </div>
 
@@ -201,13 +201,13 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>Tipo</label>
-                                                <input type="text" class="form-control" placeholder="RG" id="rg_add_cli">
+                                                <input type="text" class="form-control" placeholder="Tipo" id="tipo_add_fest">
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>Valor</label>
-                                                <input type="text" class="form-control" placeholder="Data Nascimento" id="dataNasc_add_cli">
+                                                <input type="text" class="form-control" placeholder="Valor" id="valor_add_fest">
                                             </div>
                                         </div>
                                     </div>
@@ -227,20 +227,26 @@
                     <div class="col-md-8">
                         <div class="card">
                             <div class="header">
-                                <h4 class="title">Remover Cliente</h4>
+                                <h4 class="title">Remover Festa</h4>
                             </div>
                             <div class="content">
                                 <form>
                                     <div class="row">
+										<div class="col-md-6">
+                                            <div class="form-group">
+                                                <label>Dia</label>
+                                                <input type="text" class="form-control" placeholder="Dia" id="dia_rem_fest">
+                                            </div>
+                                        </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label>CPF</label>
-                                                <input type="text" class="form-control" placeholder="CPF" id="cpf_rem_cli">
+                                                <label>Hora</label>
+                                                <input type="text" class="form-control" placeholder="Hora" id="hora_rem_fest">
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             </br>
-                                            Para remover, basta colocar o CPF do cliente a ser removido
+                                            Para remover, basta colocar o Dia e Hora da festa a ser removida
                                         </div>
                                     </div>
 
@@ -261,42 +267,42 @@
                     <div class="col-md-8">
                         <div class="card">
                             <div class="header">
-                                <h4 class="title">Alterar Cliente</h4>
+                                <h4 class="title">Alterar Festa</h4>
                             </div>
                             <div class="content">
                                 <form>
                                     <div class="row">
                                         <div class="col-md-6">
-                                            Basta colocar o CPF do cliente que deverá ser alterado e as novas informações.
+                                            Basta colocar a hora e dia da festa que deverá ser alterada e as novas informações.
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <div class="col-md-6">
+										<div class="col-md-6">
                                             <div class="form-group">
-                                                <label>CPF</label>
-                                                <input type="text" class="form-control" placeholder="CPF" id="cpf_alt_cli">
+                                                <label>Dia</label>
+                                                <input type="text" class="form-control" placeholder="Dia" id="dia_alt_fest">
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label>Nome</label>
-                                                <input type="text" class="form-control" placeholder="Nome" id="nome_alt_cli">
+                                                <label>Hora</label>
+                                                <input type="text" class="form-control" placeholder="Hora" id="hora_alt_fest">
                                             </div>
                                         </div>
 
                                     </div>
 
                                     <div class="row">
-                                        <div class="col-md-6">
+										<div class="col-md-6">
                                             <div class="form-group">
-                                                <label>RG</label>
-                                                <input type="text" class="form-control" placeholder="RG" id="rg_alt_cli">
+                                                <label>Tipo</label>
+                                                <input type="text" class="form-control" placeholder="Tipo" id="tipo_alt_fest">
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <label>Data Nascimento</label>
-                                                <input type="text" class="form-control" placeholder="RG" id="dataNasc_alt_cli">
+                                                <label>Valor</label>
+                                                <input type="text" class="form-control" placeholder="Valor" id="valor_alt_fest">
                                             </div>
                                         </div>
                                     </div>
@@ -343,14 +349,14 @@
 
 		async function insert_tuplas(){
 
-			let cpf = document.getElementById("cpf_add_cli").value;
-			let rg = document.getElementById("rg_add_cli").value;
-			let nome = document.getElementById("nome_add_cli").value;
-			let data_nasc = document.getElementById("dataNasc_add_cli").value;
+			let dia = document.getElementById("dia_add_fest").value;
+			let hora = document.getElementById("hora_add_fest").value;
+			let tipo = document.getElementById("tipo_add_fest").value;
+			let valor = document.getElementById("valor_add_fest").value;
 
-			values = [cpf, rg, nome, data_nasc, "CLIENTE"];
+			values = [dia, hora, tipo, valor];
 
-			let success = await eel.insert("CLIENTE", values)();
+			let success = await eel.insert("FESTA", values)();
 
 			if(success == -1){
 				alert("Erro ao inserir o novo registro, tente novamente");
@@ -359,13 +365,13 @@
 
 		async function delete_tuplas(){
 
-			let cpf = document.getElementById("cpf_rem_cli").value;
+			let dia = document.getElementById("dia_rem_fest").value;
+			let hora = document.getElementById("hora_rem_fest").value;
 
-			columns = ["CPF"]
-			values = [cpf];
+			columns = ["DIA", "HORA"]
+			values = [dia, hora];
 
-
-			let success = await eel.delete("CLIENTE", columns, values)();
+			let success = await eel.delete("FESTA", columns, values)();
 
 			if(success == -1){
 				alert("Erro ao deletar o registro, tente novamente");
@@ -374,18 +380,19 @@
 		}
 
 		async function update_tuplas(){
-			let cpf = document.getElementById("cpf_alt_cli").value;
-			let rg = document.getElementById("rg_alt_cli").value;
-			let nome = document.getElementById("nome_alt_cli").value;
-			let data_nasc = document.getElementById("dataNasc_alt_cli").value;
 
-			columns = ["CPF", "RG", "NOME", "DATA_NASC", "VINCULO"];
-			values = [cpf, rg, nome, data_nasc, "CLIENTE"];
+			let dia = document.getElementById("dia_alt_fest").value;
+			let hora = document.getElementById("hora_alt_fest").value;
+			let tipo = document.getElementById("tipo_alt_fest").value;
+			let valor = document.getElementById("valor_alt_fest").value;
 
-			col_cond = ["CPF"];
-			value_cond = [cpf];
+			columns = ["DIA", "HORA", "TIPO", "VALOR_INGRESSO"];
+			values = [dia, hora, tipo, valor];
 
-			let success = await eel.update("CLIENTE", columns, values, col_cond, value_cond)();
+			col_cond = ["DIA", "HORA"];
+			value_cond = [dia, hora];
+
+			let success = await eel.update("FESTA", columns, values, col_cond, value_cond)();
 
 			if(success == -1){
 				alert("Erro ao atualizar o registro, tente novamente");

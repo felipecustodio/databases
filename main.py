@@ -250,12 +250,15 @@ def home_queries(filename):
     print(text)
 
     # executar consulta
+    results = []
     try:
         cursor.execute(sql)
         result = cursor.fetchall()
         print("Resultado da consulta " + filename + ": ")
         print(result)
-        return result
+        for value in result:
+            results.append(str(value))
+        return results
     except(Exception, psycopg2.DatabaseError) as error:
         text = colored('ERRO:', 'yellow', attrs=['reverse', 'blink'])
         print('\n' + text + sql)

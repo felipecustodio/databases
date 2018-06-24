@@ -16,7 +16,6 @@ Henrique Martins Loschiavo - 8936972
 
 try:
     import psycopg2
-    import json
     import eel
     from termcolor import colored
     from configparser import ConfigParser
@@ -57,7 +56,7 @@ def select(table, columns):
     query = "SELECT " + columns_content +  " FROM " + table
 
     text = colored('QUERY: ', 'yellow', attrs=['reverse', 'blink'])
-    print(text + query)
+    print("\n" + text + query)
 
     results = []
     try:
@@ -99,12 +98,12 @@ def insert(table, columns, values):
     query = "INSERT INTO" + table + "VALUES (" + values_content + ");"
 
     text = colored('QUERY: ', 'yellow', attrs=['reverse', 'blink'])
-    print(text + query)
+    print("\n" + text + query)
 
     try:
         # tentar executar a query
         cursor.execute(query)
-        result =  cur.fetchone()[0]
+        result =  cursor.fetchone()[0]
     except Exception as error:
         # em caso de erro, retornar -1 para alertar no site que deu erro
         # exibir erro no terminal
@@ -128,7 +127,7 @@ def delete(table, column, value):
     query = "DELETE FROM " + table + "WHERE " + str(column) + "=" + str(value)
 
     text = colored('QUERY: ', 'yellow', attrs=['reverse', 'blink'])
-    print(text + query)
+    print("\n" + text + query)
 
     try:
         # tentar executar a query
@@ -157,7 +156,7 @@ def update(table, column, value, condition_column, condition_value):
     query = "UPDATE " + table + "SET " + str(column) + "=" + str(value) + " WHERE " + str(condition_column) + "=" + str(condition_value)
 
     text = colored('QUERY: ', 'yellow', attrs=['reverse', 'blink'])
-    print(text + query)
+    print("\n" + text + query)
 
     try:
         # tentar executar a query
@@ -286,13 +285,13 @@ def main():
     print("Navegue pelo site para conferir as funcionalidades.")
 
     try:
-        eel.start('index.html')
+        eel.start('index.html', options=web_app_options)
     except (Exception) as e:
         text = colored('ERRO:', 'red', attrs=['reverse', 'blink'])
         print('\n' + text + str(e))
 
     # fechar conexão com o banco ao terminar
-    cur.close()
+    cursor.close()
 
 
 if __name__ == '__main__':

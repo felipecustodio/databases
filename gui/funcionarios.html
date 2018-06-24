@@ -324,7 +324,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <button type="submit" onClick=" () => {} " class="btn btn-info btn-fill pull-right">Alterar</button>
+                                    <button type="submit" onClick="update_tuplas()" class="btn btn-info btn-fill pull-right">Alterar</button>
                                     <div class="clearfix"></div>
                                 </form>
                             </div>
@@ -399,6 +399,28 @@
 
 			if(success == -1){
 				alert("Erro ao deletar o registro, tente novamente");
+			}
+
+		}
+
+        async function update_tuplas(){
+
+			let cpf = document.getElementById("cpf_alt_func").value;
+			let nome = document.getElementById("nome_alt_func").value;
+			let rg = document.getElementById("rg_alt_func").value;
+			let dataNasc = document.getElementById("dataNasc_alt_func").value;
+			let cart = document.getElementById("cart_alt_func").value;
+			let cache = document.getElementById("cache_alt_func").value;
+
+			columns = ["CPF", "NOME", "RG", "DATA_NASC", "VINCULO", "CARTEIRA_TRAB", "CACHE"];
+			values = [cpf, nome, rg, dataNasc,  "FUNCIONARIO", cart, cache];
+			col_cond = ["CPF"];
+			value_cond = [cpf];
+
+			let success = await eel.update("FUNCIONARIO", columns, values, col_cond, value_cond)();
+
+			if(success == -1){
+				alert("Erro ao atualizar o registro, tente novamente");
 			}
 
 		}

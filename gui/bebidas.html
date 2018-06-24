@@ -290,7 +290,7 @@
                                             Para alterar, basta colocar o Balcão e o Código de barras da bebida e as novas informações.
                                         </div>
                                     </div>
-                                    <button type="submit" onClick=" () => {} " class="btn btn-info btn-fill pull-right">Alterar</button>
+                                    <button type="submit" onClick="update_tuplas()" class="btn btn-info btn-fill pull-right">Alterar</button>
                                     <div class="clearfix"></div>
                                 </form>
                             </div>
@@ -359,6 +359,23 @@
 
                 if(success == -1){
                     alert("Erro ao deletar o registro, tente novamente");
+                }
+
+            }
+            async function update_tuplas(){
+
+                let numBalc = document.getElementById("numBalc_alt_beb").value;
+                let codBar = document.getElementById("codBar_alt_beb").value;
+
+                columns = ["NRO_BALCAO", "CODIGO_BARRAS"];
+                values = [numBalc, codBar];
+                col_cond = ["NRO_BALCAO", "CODIGO_BARRAS"];
+                value_cond = [numBalc, codBar];
+
+                let success = await eel.update("BEBIDA", columns, values, col_cond, value_cond)();
+
+                if(success == -1){
+                    alert("Erro ao atualizar o registro, tente novamente");
                 }
 
             }

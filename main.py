@@ -34,6 +34,8 @@ connection = None
 cursor = None
 
 # Requisições CRUD
+
+# SELECT
 @eel.expose
 def select(table, columns):
     global connection
@@ -76,7 +78,7 @@ def select(table, columns):
         print(str(error))
         return results
 
-
+# INSERT
 @eel.expose
 def insert(table, values):
     global connection
@@ -114,6 +116,7 @@ def insert(table, values):
     return result
 
 
+# DELETE
 @eel.expose
 def delete(table, columns, values):
     global connection
@@ -146,7 +149,7 @@ def delete(table, columns, values):
     # formatar esse resultado
     return result
 
-
+# UPDATE
 @eel.expose
 def update(table, column, value, condition_columns, condition_values):
     global connection
@@ -217,7 +220,7 @@ def run_sql(filename):
     sql = file.read()
     file.close()
 
-    text = colored('Executando ' + filename, 'green', attrs=['reverse', 'blink'])
+    text = colored('Executando ' + filename, 'green')
     print(text)
 
     # obter os comandos separando o arquivo por ';'

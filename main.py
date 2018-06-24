@@ -229,12 +229,11 @@ def run_sql(filename):
             command = command + ';'
             try:
                 cursor.execute(command)
-                result = cursor.fetchall()
             except(Exception, psycopg2.DatabaseError) as error:
                 text = colored('ERRO:', 'yellow', attrs=['reverse', 'blink'])
                 print('\n' + text + command)
                 print('\n' + str(error))
-    return result
+
 
 def connect():
     global connection

@@ -43,6 +43,8 @@ def select(table, columns):
     global connection
     global cursor
 
+    """ SELECT """
+
     print("Executando SELECT...")
     # "SELECT columns[0] columns[1] ... FROM table"
 
@@ -87,6 +89,8 @@ def insert(table, values):
     global connection
     global cursor
 
+    """ Requisição CRUD - INSERT """
+
     print("Executando INSERT...")
 
     # parsear dados
@@ -125,6 +129,8 @@ def delete(table, columns, values):
     global connection
     global cursor
 
+    """ Requisição CRUD - DELETE """
+
     print("Executando DELETE...")
     # gerar query com dados do site
     query = "DELETE FROM " + table + " WHERE " + str(columns[0]) + "=" + "'" + str(values[0]) + "'"
@@ -158,6 +164,8 @@ def delete(table, columns, values):
 def update(table, column, value, condition_columns, condition_values):
     global connection
     global cursor
+
+    """ Requisição CRUD - UPDATE """
 
     print("Executando UPDATE...")
 
@@ -202,6 +210,8 @@ def run_sql(filename):
     global connection
     global cursor
 
+    """ Executa todos os comandos de um arquivo .sql """
+
     # ler arquivo SQL em um único buffer
     file = open(filename, 'r')
     sql = file.read()
@@ -230,6 +240,8 @@ def home_queries(filename):
     global connection
     global cursor
 
+    """ Executa as consultas da página inicial (queries complexas) """
+
     # ler arquivo SQL em um único buffer
     file = open(filename, 'r')
     sql = file.read()
@@ -238,24 +250,18 @@ def home_queries(filename):
     text = colored('Executando ' + filename, 'green')
     print(text)
 
-    # obter os comandos separando o arquivo por ';'
-    commands = sql.split(';')
-
-    # executar todos os comandos
-    for command in commands[:-1]:
-        if (len(command) > 0):
-            command = command + ';'
-            try:
-                cursor.execute(command)
-                result = cursor.fetchall()
-                print("Resultado da consulta " + filename + ": ")
-                print(result)
-                return result
-            except(Exception, psycopg2.DatabaseError) as error:
-                text = colored('ERRO:', 'yellow', attrs=['reverse', 'blink'])
-                print('\n' + text + command)
-                print('\n' + str(error))
-                return -1
+    # executar consulta
+    try:
+        cursor.execute(sql)
+        result = cursor.fetchall()
+        print("Resultado da consulta " + filename + ": ")
+        print(result)
+        return result
+    except(Exception, psycopg2.DatabaseError) as error:
+        text = colored('ERRO:', 'yellow', attrs=['reverse', 'blink'])
+        print('\n' + text + sql)
+        print('\n' + str(error))
+        return -1
 
 
 def setup(filename='database.ini', section='postgresql'):
@@ -264,6 +270,7 @@ def setup(filename='database.ini', section='postgresql'):
 
     """ Configura a conexão ao PostgreSQL """
     """ Utiliza arquivo de configuração database.ini """
+
     parser = ConfigParser()
     parser.read(filename)
 
@@ -278,6 +285,8 @@ def setup(filename='database.ini', section='postgresql'):
 def connect():
     global connection
     global cursor
+
+    """ Cria a conexão ao PostgreSQL """
 
     try:
         # configurar os parâmetros de conexão

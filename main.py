@@ -57,8 +57,8 @@ def select(table, columns):
     # gerar query com dados do site
     query = "SELECT " + columns_content + " FROM " + table
 
-    text = colored('QUERY: ', 'yellow', attrs=['reverse', 'blink'])
-    print("\n" + text + query)
+    text = colored('QUERY:', 'yellow', attrs=['reverse', 'blink'])
+    print("\n" + text + " " + query)
 
     results = []
     try:
@@ -100,8 +100,8 @@ def insert(table, values):
     # gerar query com dados do site
     query = "INSERT INTO " + table + " VALUES (" + values_content + ");"
 
-    text = colored('QUERY: ', 'yellow', attrs=['reverse', 'blink'])
-    print("\n" + text + query)
+    text = colored('QUERY:', 'yellow', attrs=['reverse', 'blink'])
+    print("\n" + text + " " + query)
 
     try:
         # tentar executar a query
@@ -134,8 +134,8 @@ def delete(table, columns, values):
             if (index > 0):
                 query += " AND " + str(columns[index]) + "=" + "'" + str(values[index]) + "'"
 
-    text = colored('QUERY: ', 'yellow', attrs=['reverse', 'blink'])
-    print("\n" + text + query)
+    text = colored('QUERY:', 'yellow', attrs=['reverse', 'blink'])
+    print("\n" + text + " " + query)
 
     try:
         # tentar executar a query
@@ -178,8 +178,8 @@ def update(table, column, value, condition_columns, condition_values):
         for index, value in enumerate(condition_columns, start=1):
             query += " AND " + str(condition_columns[index]) + "=" + "'" + str(condition_values[index]) + "'"
 
-    text = colored('QUERY: ', 'yellow', attrs=['reverse', 'blink'])
-    print("\n" + text + query)
+    text = colored('QUERY:', 'yellow', attrs=['reverse', 'blink'])
+    print("\n" + text + " " + query)
 
     try:
         # tentar executar a query
@@ -248,11 +248,14 @@ def home_queries(filename):
             try:
                 cursor.execute(command)
                 result = cursor.fetchall()
+                print("Resultado da consulta " + filename + ": ")
+                print(result)
+                return result
             except(Exception, psycopg2.DatabaseError) as error:
                 text = colored('ERRO:', 'yellow', attrs=['reverse', 'blink'])
                 print('\n' + text + command)
                 print('\n' + str(error))
-    return result
+                return -1
 
 
 def setup(filename='database.ini', section='postgresql'):

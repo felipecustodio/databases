@@ -194,7 +194,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <button type="submit" onClick=" () => {} " class="btn btn-info btn-fill pull-right">Inserir</button>
+                                    <button type="submit" onClick="insert_tuplas()" class="btn btn-info btn-fill pull-right">Inserir</button>
                                     <div class="clearfix"></div>
                                 </form>
                             </div>
@@ -227,7 +227,7 @@
                                         </div>
                                     </div>
 
-                                    <button type="submit" onClick=" () => {} " class="btn btn-info btn-fill pull-right">Remover</button>
+                                    <button type="submit" onClick="delete_tuplas()" class="btn btn-info btn-fill pull-right">Remover</button>
                                     <div class="clearfix"></div>
                                 </form>
                             </div>
@@ -293,29 +293,59 @@
 	<script src="assets/js/bootstrap.min.js" type="text/javascript"></script>
 
     <script type="text/javascript">
-    		async function get_tuplas() {
-    			columns = ["NOME", "DURACAO_SHOW", "CACHE"];
-    			let array = await eel.select("DJ", columns)();
-    			// return clientes
-    			let table = document.getElementById("table");
+        async function get_tuplas() {
+			columns = ["NOME", "DURACAO_SHOW", "CACHE"];
+			let array = await eel.select("DJ", columns)();
+			// return clientes
+			let table = document.getElementById("table");
 
-    			if(array.length > 0){
-    				for(var i = 0; i < array.length; i++)
-    				{
-    					// create a new row
-    					var newRow = table.insertRow(table.length);
-    					for(var j = 0; j < 1; j++)
-    					{
-    						// create a new cell
-    						var cell = newRow.insertCell(j);
-    						// add value to the cell
-    						cell.innerHTML = array[i];
-    					}
-    				}
-    			}else{
-    				alert("Não há dados armazenados");
-    			}
-    		}
+			if(array.length > 0){
+				for(var i = 0; i < array.length; i++)
+				{
+					// create a new row
+					var newRow = table.insertRow(table.length);
+					for(var j = 0; j < 1; j++)
+					{
+						// create a new cell
+						var cell = newRow.insertCell(j);
+						// add value to the cell
+						cell.innerHTML = array[i];
+					}
+				}
+			}else{
+				alert("Não há dados armazenados");
+			}
+		}
+
+        async function insert_tuplas(){
+
+            let name = document.getElementById("name_add_djs").value;
+            let dur = document.getElementById("dur_add_djs").value;
+            let cache = document.getElementById("cache_add_djs").value;
+
+            values = [name, dur, cache];
+
+            let success = await eel.insert("DJ", values)();
+
+            if(success == -1){
+            	alert("Erro ao inserir o novo registro, tente novamente");
+            }
+	   }
+
+	    async function delete_tuplas(){
+
+		    let name = document.getElementById("nome_rem_djs").value;
+
+		    columns = ["NOME"]
+		    values = [name];
+
+		    let success = await eel.delete("DJ", columns, values)();
+
+		    if(success == -1){
+                alert("Erro ao deletar o registro, tente novamente");
+            }
+
+	    }
     </script>
 
 

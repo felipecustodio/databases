@@ -21,11 +21,6 @@
     <!--  Light Bootstrap Table core CSS    -->
     <link href="assets/css/light-bootstrap-dashboard.css?v=1.4.0" rel="stylesheet"/>
 
-
-
-
-
-
     <!--     Fonts and icons     -->
     <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
     <link href='http://fonts.googleapis.com/css?family=Roboto:400,700,300' rel='stylesheet' type='text/css'>
@@ -220,7 +215,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <button type="submit" onClick=" () => {} " class="btn btn-info btn-fill pull-right">Inserir</button>
+                                    <button type="submit" onClick="insert_tuplas()" class="btn btn-info btn-fill pull-right">Inserir</button>
                                     <div class="clearfix"></div>
                                 </form>
                             </div>
@@ -253,7 +248,7 @@
                                         </div>
                                     </div>
 
-                                    <button type="submit"  onClick=" () => {} " class="btn btn-info btn-fill pull-right">Remover</button>
+                                    <button type="submit"  onClick="delete_tuplas()" class="btn btn-info btn-fill pull-right">Remover</button>
                                     <div class="clearfix"></div>
                                 </form>
                             </div>
@@ -373,6 +368,41 @@
 				alert("Não há dados armazenados");
 			}
 		}
+
+		async function insert_tuplas(){
+
+			let cpf = document.getElementById("cpf_add_func").value;
+			let rg = document.getElementById("rg_add_func").value;
+			let nome = document.getElementById("nome_add_func").value;
+			let data_nasc = document.getElementById("dataNasc_add_func").value;
+			let cart_trab = document.getElementById("cart_add_func").value;
+			let cache = document.getElementById("cache_add_func").value;
+			let nro_balcao = document.getElementById("numbalc_add_func").value;
+
+			values = [cpf, rg, nome, data_nasc, "FUNCIONARIO", cart_trab, cache, nro_balcao];
+
+			let success = await eel.insert("FUNCIONARIO", values)();
+
+			if(success == -1){
+				alert("Erro ao inserir o novo registro, tente novamente");
+			}
+		}
+
+		async function delete_tuplas(){
+
+			let cpf = document.getElementById("cpf_rem_func").value;
+
+			columns = ["CPF"]
+			values = [cpf];
+
+			let success = await eel.delete("FUNCIONARIO", columns, values)();
+
+			if(success == -1){
+				alert("Erro ao deletar o registro, tente novamente");
+			}
+
+		}
+
 	</script>
 
 

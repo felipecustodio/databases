@@ -185,7 +185,7 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label>Data Nascimento</label>
-                                                <input type="text" class="form-control" placeholder="RG" id="dataNasc_add_cli">
+                                                <input type="text" class="form-control" placeholder="Data Nascimento" id="dataNasc_add_cli">
                                             </div>
                                         </div>
                                     </div>
@@ -222,7 +222,7 @@
                                         </div>
                                     </div>
 
-                                    <button type="submit" onClick=" () => {} " class="btn btn-info btn-fill pull-right">Remover</button>
+                                    <button type="submit" onClick="delete_tuplas()" class="btn btn-info btn-fill pull-right">Remover</button>
                                     <div class="clearfix"></div>
                                 </form>
                             </div>
@@ -278,7 +278,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <button type="submit" onClick=" () => {} " class="btn btn-info btn-fill pull-right">Alterar</button>
+                                    <button type="submit" onClick="update_tuplas()" class="btn btn-info btn-fill pull-right">Alterar</button>
                                     <div class="clearfix"></div>
                                 </form>
                             </div>
@@ -333,6 +333,42 @@
 			if(success == -1){
 				alert("Erro ao inserir o novo registro, tente novamente");
 			}
+		}
+
+		async function delete_tuplas(){
+
+			let cpf = document.getElementById("cpf_rem_cli").value;
+
+			columns = ["CPF"]
+			values = [cpf];
+
+
+			let success = await eel.delete("CLIENTE", columns, values)();
+
+			if(success == -1){
+				alert("Erro ao deletar o registro, tente novamente");
+			}
+
+		}
+
+		async function update_tuplas(){
+			let cpf = document.getElementById("cpf_alt_cli").value;
+			let rg = document.getElementById("rg_alt_cli").value;
+			let nome = document.getElementById("nome_alt_cli").value;
+			let data_nasc = document.getElementById("dataNasc_alt_cli").value;
+
+			columns = ["CPF", "RG", "NOME", "DATA_NASC", "VINCULO"];
+			values = [cpf, rg, nome, data_nasc, "CLIENTE"];
+
+			col_cond = ["CPF"];
+			value_cond = [cpf];
+
+			let success = await eel.update("CLIENTE", columns, values, col_cond, value_cond)();
+
+			if(success == -1){
+				alert("Erro ao atualizar o registro, tente novamente");
+			}
+
 		}
 
 	</script>

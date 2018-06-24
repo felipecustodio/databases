@@ -29,11 +29,9 @@ except Exception as e:
 # https://github.com/ChrisKnott/Eel
 # http://www.postgresqltutorial.com/postgresql-python/
 
-
 # conexão ao banco de dados
 connection = None
 cursor = None
-
 
 # Requisições CRUD
 @eel.expose
@@ -90,41 +88,12 @@ def insert(table, values):
     values_content = ""
     for index, value in enumerate(values):
         if (index < len(values) - 1):
-            values_content += str(value) + ", "
+            values_content += "'" + str(value) + "'" + ", "
         else:
-            values_content += str(value)
+            values_content += "'" + str(value) + "'"
 
     # gerar query com dados do site
-    query = "INSERT INTO" + table + "VALUES (" + values_content + ");"
-
-    text = colored('QUERY: ', 'yellow', attrs=['reverse', 'blink'])
-    print("\n" + text + query)
-
-    try:
-        # tentar executar a query
-        cursor.execute(query)
-        result =  cursor.fetchone()[0]
-    except Exception as error:
-        # em caso de erro, retornar -1 para alertar no site que deu erro
-        # exibir erro no terminal
-        text = colored('ERRO:', 'yellow', attrs=['reverse', 'blink'])
-        print("")
-        print(str(error))
-        result = -1 # deu errado, alertar no site
-
-    # formatar esse resultado
-    return result
-
-
-@eel.expose
-def delete(table, column, value):
-    global connection
-    global cursor
-
-    print("Executando DELETE...")
-
-    # gerar query com dados do site
-    query = "DELETE FROM " + table + "WHERE " + str(column) + "=" + str(value)
+    query = "INSERT INTO " + table + " VALUES (" + values_content + ");"
 
     text = colored('QUERY: ', 'yellow', attrs=['reverse', 'blink'])
     print("\n" + text + query)
@@ -146,14 +115,61 @@ def delete(table, column, value):
 
 
 @eel.expose
-def update(table, column, value, condition_column, condition_value):
+def delete(table, columns, values):
+    global connection
+    global cursor
+
+    print("Executando DELETE...")
+    # gerar query com dados do site
+    query = "DELETE FROM " + table + " WHERE " + str(columns[0]) + "=" + "'" + str(values[0]) + "'"
+    # caso haja mais de uma condição, adicioná-las
+    if (len(columns) > 1):
+        for index, content in enumerate(columns):
+            if (index > 0):
+                query += " AND " + str(columns[index]) + "=" + "'" + str(values[index]) + "'"
+
+    text = colored('QUERY: ', 'yellow', attrs=['reverse', 'blink'])
+    print("\n" + text + query)
+
+    try:
+        # tentar executar a query
+        cursor.execute(query)
+        result = 1
+    except Exception as error:
+        # em caso de erro, retornar -1 para alertar no site que deu erro
+        # exibir erro no terminal
+        text = colored('ERRO:', 'yellow', attrs=['reverse', 'blink'])
+        print("")
+        print(str(error))
+        result = -1 # deu errado, alertar no site
+
+    # formatar esse resultado
+    return result
+
+
+@eel.expose
+def update(table, column, value, condition_columns, condition_values):
     global connection
     global cursor
 
     print("Executando UPDATE...")
 
+    table = str(table)
+
+    updates = ""
+    for index, content in enumerate(column):
+        print("Index = {} / Size Column = {} / Size Value = {}".format(index, len(column), len(value)))
+        if (index < len(column) - 1):
+            updates += str(column[index]) + "=" + "'" + str(value[index])+ "'" + ", "
+        else:
+            updates += str(column[index]) + "=" + "'" + str(value[index]) + "'"
+
     # gerar query com dados do site
-    query = "UPDATE " + table + "SET " + str(column) + "=" + str(value) + " WHERE " + str(condition_column) + "=" + str(condition_value)
+    query = "UPDATE " + table + " SET " + updates + " WHERE " + condition_columns[0] + "=" + "'" + condition_values[0] + "'"
+    # caso haja mais de uma condição, adicioná-las
+    if (len(condition_columns) > 1):
+        for index, value in enumerate(condition_columns, start=1):
+            query += " AND " + str(condition_columns[index]) + "=" + "'" + str(condition_values[index]) + "'"
 
     text = colored('QUERY: ', 'yellow', attrs=['reverse', 'blink'])
     print("\n" + text + query)
@@ -175,7 +191,6 @@ def update(table, column, value, condition_column, condition_value):
 
 
 def setup(filename='database.ini', section='postgresql'):
-
     global connection
     global cursor
 
@@ -192,8 +207,36 @@ def setup(filename='database.ini', section='postgresql'):
     return db
 
 
-def connect():
+@eel.expose
+def run_sql(filename):
+    global connection
+    global cursor
 
+    # ler arquivo SQL em um único buffer
+    file = open(filename, 'r')
+    sql = file.read()
+    file.close()
+
+    text = colored('Executando ' + filename, 'green', attrs=['reverse', 'blink'])
+    print(text)
+
+    # obter os comandos separando o arquivo por ';'
+    commands = sql.split(';')
+
+    # executar todos os comandos
+    for command in commands[:-1]:
+        if (len(command) > 0):
+            command = command + ';'
+            try:
+                cursor.execute(command)
+                result = cursor.fetchall()
+            except(Exception, psycopg2.DatabaseError) as error:
+                text = colored('ERRO:', 'yellow', attrs=['reverse', 'blink'])
+                print('\n' + text + command)
+                print('\n' + str(error))
+    return result
+
+def connect():
     global connection
     global cursor
 
@@ -226,42 +269,15 @@ def connect():
         sys.exit()
 
 
-def run_sql(filename):
-
-    global connection
-    global cursor
-
-    # ler arquivo SQL em um único buffer
-    file = open(filename, 'r')
-    sql = file.read()
-    file.close()
-
-    text = colored('Executando ' + filename, 'green', attrs=['reverse', 'blink'])
-    print(text)
-
-    # obter os comandos separando o arquivo por ';'
-    commands = sql.split(';')
-
-    # executar todos os comandos
-    for command in commands[:-1]:
-        if (len(command) > 0):
-            command = command + ';'
-            try:
-                cursor.execute(command)
-            except(Exception, psycopg2.DatabaseError) as error:
-                text = colored('ERRO:', 'yellow', attrs=['reverse', 'blink'])
-                print('\n' + text + command)
-                print('\n' + str(error))
-
 def main():
     global connection
     global cursor
 
     web_app_options = {
-	'mode': "chrome-app",
-	'port': 8000,
-    # modo incognito evita problemas com cache
-	'chromeFlags': ["--incognito"]
+    	'mode': "chrome-app",
+    	'port': 8000,
+        # modo incognito evita problemas com cache
+    	'chromeFlags': ["--incognito"]
     }
 
     # inicializar servidor web local

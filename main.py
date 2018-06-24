@@ -173,7 +173,6 @@ def update(table, column, value, condition_columns, condition_values):
 
     updates = ""
     for index, content in enumerate(column):
-        print("Index = {} / Size Column = {} / Size Value = {}".format(index, len(column), len(value)))
         if (index < len(column) - 1):
             updates += str(column[index]) + "=" + "'" + str(value[index]) + "'" + ", "
         else:
@@ -345,7 +344,7 @@ def main():
     print("Abrindo a interface gráfica...")
     text = colored('SEJA BEM-VINDO A NEVERLAND!', 'yellow', attrs=['reverse', 'blink'])
     print('\n' + text)
-    print("Navegue pelo site para conferir as funcionalidades.")
+    print("Navegue pelo site para conferir as funcionalidades.\n")
 
     try:
         eel.start('index.html', options=web_app_options)

@@ -81,7 +81,7 @@ def select(table, columns):
 
 
 @eel.expose
-def insert(table, columns, values):
+def insert(table, values):
     global connection
     global cursor
 
@@ -286,7 +286,7 @@ def main():
     print("Navegue pelo site para conferir as funcionalidades.")
 
     try:
-        eel.start('index.html')
+        eel.start('index.html', options=web_app_options)
     except (Exception) as e:
         text = colored('ERRO:', 'red', attrs=['reverse', 'blink'])
         print('\n' + text + str(e))

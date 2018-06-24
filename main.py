@@ -310,10 +310,10 @@ def main():
     global cursor
 
     web_app_options = {
-    	'mode': "chrome-app",
-    	'port': 8000,
+        'mode': "chrome-app",
+        'port': 8000,
         # modo incognito evita problemas com cache
-    	'chromeFlags': ["--incognito"]
+        'chromeFlags': ["--incognito"]
     }
 
     # inicializar servidor web local

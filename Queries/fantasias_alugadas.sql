@@ -22,6 +22,6 @@ JOIN (
     FROM
       comanda) comanda
   ON
-    comanda.codigo = aluguel.codigo ) alugel_comanda
+    comanda.codigo = aluguel.codigo ) aluguel_comanda
 ON
-  fantasia.codigo_barras = alugel_comanda.codigo_fantasia
+  fantasia.codigo_barras = aluguel_comanda.codigo_fantasia

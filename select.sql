@@ -94,14 +94,14 @@ JOIN (
     FROM
       comanda) comanda
   ON
-    comanda.codigo = aluguel.codigo ) alugel_comanda
+    comanda.codigo = aluguel.codigo ) aluguel_comanda
 ON
-  fantasia.codigo_barras = alugel_comanda.codigo_fantasia
+  fantasia.codigo_barras = aluguel_comanda.codigo_fantasia
 
   -- LISTAR TODAS AS FANTASIAS ALUGADAS E O RESPECTIVO CLIENTE
 SELECT
   fantasia.nome,
-  alugel_comanda_cliente.nome
+  aluguel_comanda_cliente.nome
 FROM (
   SELECT
     nome,
@@ -137,9 +137,9 @@ JOIN (
     ON
       cliente.cpf = comanda.cpf_cliente) comanda_cliente
   ON
-    comanda_cliente.codigo = aluguel.codigo) alugel_comanda_cliente
+    comanda_cliente.codigo = aluguel.codigo) aluguel_comanda_cliente
 ON
-  fantasia.codigo_barras = alugel_comanda_cliente.codigo_fantasia
+  fantasia.codigo_barras = aluguel_comanda_cliente.codigo_fantasia
 
 
   --VALOR TOTAL DAS COMANDAS DE CADA FESTA

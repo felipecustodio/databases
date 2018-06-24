@@ -33,7 +33,11 @@ except Exception as e:
 connection = None
 cursor = None
 
+
 # Requisições CRUD
+
+
+# SELECT
 @eel.expose
 def select(table, columns):
     global connection
@@ -51,7 +55,7 @@ def select(table, columns):
             columns_content += str(value)
 
     # gerar query com dados do site
-    query = "SELECT " + columns_content +  " FROM " + table
+    query = "SELECT " + columns_content + " FROM " + table
 
     text = colored('QUERY: ', 'yellow', attrs=['reverse', 'blink'])
     print("\n" + text + query)
@@ -77,6 +81,7 @@ def select(table, columns):
         return results
 
 
+# INSERT
 @eel.expose
 def insert(table, values):
     global connection
@@ -108,12 +113,13 @@ def insert(table, values):
         text = colored('ERRO:', 'yellow', attrs=['reverse', 'blink'])
         print("")
         print(str(error))
-        result = -1 # deu errado, alertar no site
+        result = -1  # deu errado, alertar no site
 
     # formatar esse resultado
     return result
 
 
+# DELETE
 @eel.expose
 def delete(table, columns, values):
     global connection
@@ -141,12 +147,13 @@ def delete(table, columns, values):
         text = colored('ERRO:', 'yellow', attrs=['reverse', 'blink'])
         print("")
         print(str(error))
-        result = -1 # deu errado, alertar no site
+        result = -1  # deu errado, alertar no site
 
     # formatar esse resultado
     return result
 
 
+# UPDATE
 @eel.expose
 def update(table, column, value, condition_columns, condition_values):
     global connection
@@ -160,7 +167,7 @@ def update(table, column, value, condition_columns, condition_values):
     for index, content in enumerate(column):
         print("Index = {} / Size Column = {} / Size Value = {}".format(index, len(column), len(value)))
         if (index < len(column) - 1):
-            updates += str(column[index]) + "=" + "'" + str(value[index])+ "'" + ", "
+            updates += str(column[index]) + "=" + "'" + str(value[index]) + "'" + ", "
         else:
             updates += str(column[index]) + "=" + "'" + str(value[index]) + "'"
 
@@ -184,9 +191,67 @@ def update(table, column, value, condition_columns, condition_values):
         text = colored('ERRO:', 'yellow', attrs=['reverse', 'blink'])
         print("")
         print(str(error))
-        result = -1 # deu errado, alertar no site
+        result = -1  # deu errado, alertar no site
 
     # formatar esse resultado
+    return result
+
+
+@eel.expose
+def run_sql(filename):
+    global connection
+    global cursor
+
+    # ler arquivo SQL em um único buffer
+    file = open(filename, 'r')
+    sql = file.read()
+    file.close()
+
+    text = colored('Executando ' + filename, 'green')
+    print(text)
+
+    # obter os comandos separando o arquivo por ';'
+    commands = sql.split(';')
+
+    # executar todos os comandos
+    for command in commands[:-1]:
+        if (len(command) > 0):
+            command = command + ';'
+            try:
+                cursor.execute(command)
+            except(Exception, psycopg2.DatabaseError) as error:
+                text = colored('ERRO:', 'yellow', attrs=['reverse', 'blink'])
+                print('\n' + text + command)
+                print('\n' + str(error))
+
+
+@eel.expose
+def home_queries(filename):
+    global connection
+    global cursor
+
+    # ler arquivo SQL em um único buffer
+    file = open(filename, 'r')
+    sql = file.read()
+    file.close()
+
+    text = colored('Executando ' + filename, 'green')
+    print(text)
+
+    # obter os comandos separando o arquivo por ';'
+    commands = sql.split(';')
+
+    # executar todos os comandos
+    for command in commands[:-1]:
+        if (len(command) > 0):
+            command = command + ';'
+            try:
+                cursor.execute(command)
+                result = cursor.fetchall()
+            except(Exception, psycopg2.DatabaseError) as error:
+                text = colored('ERRO:', 'yellow', attrs=['reverse', 'blink'])
+                print('\n' + text + command)
+                print('\n' + str(error))
     return result
 
 
@@ -205,34 +270,6 @@ def setup(filename='database.ini', section='postgresql'):
         for param in params:
             db[param[0]] = param[1]
     return db
-
-
-@eel.expose
-def run_sql(filename):
-    global connection
-    global cursor
-
-    # ler arquivo SQL em um único buffer
-    file = open(filename, 'r')
-    sql = file.read()
-    file.close()
-
-    text = colored('Executando ' + filename, 'green', attrs=['reverse', 'blink'])
-    print(text)
-
-    # obter os comandos separando o arquivo por ';'
-    commands = sql.split(';')
-
-    # executar todos os comandos
-    for command in commands[:-1]:
-        if (len(command) > 0):
-            command = command + ';'
-            try:
-                cursor.execute(command)
-            except(Exception, psycopg2.DatabaseError) as error:
-                text = colored('ERRO:', 'yellow', attrs=['reverse', 'blink'])
-                print('\n' + text + command)
-                print('\n' + str(error))
 
 
 def connect():

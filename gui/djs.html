@@ -276,7 +276,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <button type="submit" onClick=" () => {} " class="btn btn-info btn-fill pull-right">Alterar</button>
+                                    <button type="submit" onClick="update_tuplas()" class="btn btn-info btn-fill pull-right">Alterar</button>
                                     <div class="clearfix"></div>
                                 </form>
                             </div>
@@ -346,6 +346,25 @@
             }
 
 	    }
+
+        async function update_tuplas(){
+
+		    let nome = document.getElementById("nome_alt_djs").value;
+		    let dur = document.getElementById("dur_alt_djs").value;
+		    let cache = document.getElementById("cache_alt_djs").value;
+
+			columns = ["NOME", "DURACAO_SHOW", "CACHE"];
+			values = [nome, dur, cache];
+			col_cond = ["NOME"];
+			value_cond = [nome];
+
+			let success = await eel.update("DJ", columns, values, col_cond, value_cond)();
+
+			if(success == -1){
+				alert("Erro ao atualizar o registro, tente novamente");
+			}
+
+		}
     </script>
 
 

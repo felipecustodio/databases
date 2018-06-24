@@ -290,17 +290,17 @@
                                         <div class="col-md-4">
                                             <div class="form-group">
                                                 <label>Data Nascimento</label>
-                                                <input type="text" class="form-control" placeholder="Data nascimento" id="rg_alt_prop">
+                                                <input type="text" class="form-control" placeholder="Data nascimento" id="dataNasc_alt_prop">
                                             </div>
                                         </div>
                                         <div class="col-md-4">
                                             <div class="form-group">
                                                 <label>Número de Caminhões</label>
-                                                <input type="number" class="form-control" placeholder="Número de caminhões">
+                                                <input type="number" class="form-control" placeholder="Número de caminhões" id="numcam_alt_prop">
                                             </div>
                                         </div>
                                     </div>
-                                    <button type="submit" onClick=" () => {} " class="btn btn-info btn-fill pull-right">Alterar</button>
+                                    <button type="submit" onClick="update_tuplas()" class="btn btn-info btn-fill pull-right">Alterar</button>
                                     <div class="clearfix"></div>
                                 </form>
                             </div>
@@ -374,6 +374,27 @@
             }
 
         }
+
+        async function update_tuplas(){
+
+		    let cpf = document.getElementById("cpf_alt_prop").value;
+		    let name = document.getElementById("name_alt_prop").value;
+		    let rg = document.getElementById("rg_alt_prop").value;
+		    let dataNasc = document.getElementById("dataNasc_alt_prop").value;
+			let numcam = document.getElementById("numcam_alt_prop").value;
+
+			columns = ["CPF", "NOME", "RG", "DATA_NASC", "VINCULO", "NRO_CAMINHOES "];
+			values = [cpf, name, rg, dataNasc, "PROPRIETARIO", numcam];
+			col_cond = ["CPF"];
+			value_cond = [cpf];
+
+			let success = await eel.update("PROPRIETARIO", columns, values, col_cond, value_cond)();
+
+			if(success == -1){
+				alert("Erro ao atualizar o registro, tente novamente");
+			}
+
+		}
 	</script>
 
 

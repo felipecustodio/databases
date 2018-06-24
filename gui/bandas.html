@@ -282,7 +282,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <button type="submit" onClick=" () => {} " class="btn btn-info btn-fill pull-right">Alterar</button>
+                                    <button type="submit" onClick="update_tuplas()" class="btn btn-info btn-fill pull-right">Alterar</button>
                                     <div class="clearfix"></div>
                                 </form>
                             </div>
@@ -326,9 +326,9 @@
         async function insert_tuplas(){
 
             let nome = document.getElementById("nome_add_ban").value;
-            let dura = document.getElementById("dura_add_ban").value;
-            let gen = document.getElementById("gen_add_ban").value;
-            let cache = document.getElementById("cache_add_ban").value;
+            let nome = document.getElementById("nome_add_ban").value;
+            let nome = document.getElementById("nome_add_ban").value;
+            let nome = document.getElementById("nome_add_ban").value;
 
             values = [nome, dura, gen, cache];
 
@@ -353,6 +353,26 @@
             }
 
         }
+
+        async function update_tuplas(){
+
+		    let nome = document.getElementById("nome_alt_ban").value;
+		    let dura = document.getElementById("dura_alt_ban").value;
+		    let gen = document.getElementById("gen_alt_ban").value;
+		    let cache = document.getElementById("cache_alt_ban").value;
+
+			columns = ["NOME", "DURACAO_SHOW", "GENERO", "CACHE", "VINCULO"];
+			values = [nome, dura, gen, cache];
+			col_cond = ["NOME"];
+			value_cond = [nome];
+
+			let success = await eel.update("BANDA", columns, values, col_cond, value_cond)();
+
+			if(success == -1){
+				alert("Erro ao atualizar o registro, tente novamente");
+			}
+
+		}
     </script>
 
     <!--  Notifications Plugin    -->

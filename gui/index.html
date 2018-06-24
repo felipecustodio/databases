@@ -140,7 +140,7 @@
 	                                <p class="category">Todos os clientes que já foram cadastrados no sistema</p>
 	                            </div>
 	                            <div class="content table-responsive table-full-width">
-	                                <table id="table"class="table table-hover table-striped">
+	                                <table id="table" class="table table-hover table-striped">
 	                                    <thead>
 	                                        <th>CPF / Nome / RG</th>
 	                                    </thead>
@@ -166,28 +166,30 @@
 	<script src="assets/js/light-bootstrap-dashboard.js?v=1.4.0"></script>
 
 	<script type="text/javascript">
-		async function get_clientes() {
+		async function get_tuplas() {
 			columns = ["CPF", "NOME", "RG"];
-			let clientes = await eel.select("CLIENTE", columns)();
+			let clientes  = await eel.select("CLIENTE", columns)();
 			document.getElementById("clientes").innerHTML = clientes[0];
 			// return clientes;
 			let table = document.getElementById("table");
-
 			let array = clientes;
 
-			for(var i = 0; i < array.length; i++)
-            {
-                // create a new row
-                var newRow = table.insertRow(table.length);
-                for(var j = 0; j < 1; j++)
-                {
-                    // create a new cell
-                    var cell = newRow.insertCell(j);
-                    // add value to the cell
-                    cell.innerHTML = array[i];
-
-                }
-            }
+			if(array.length > 0){
+				for(var i = 0; i < array.length; i++)
+				{
+					// create a new row
+					var newRow = table.insertRow(table.length);
+					for(var j = 0; j < 1; j++)
+					{
+						// create a new cell
+						var cell = newRow.insertCell(j);
+						// add value to the cell
+						cell.innerHTML = array[i];
+					}
+				}
+			}else{
+				alert("Não há dados armazenados");
+			}
 		}
 	</script>
 

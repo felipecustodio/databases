@@ -36,18 +36,16 @@ connection = None
 cursor = None
 
 
-@eel.expose
-def hello_world():
-    text = colored('HELLO, WORLD! ', 'yellow', attrs=['reverse', 'blink'])
-    print(text)
-
-
+# Requisições CRUD
 @eel.expose
 def select(table, columns):
     global connection
     global cursor
 
+    print("Executando SELECT...")
     # "SELECT columns[0] columns[1] ... FROM table"
+
+    # parsear colunas
     columns_content = ""
     for index, value in enumerate(columns):
         if (index < len(columns) - 1):
@@ -55,22 +53,126 @@ def select(table, columns):
         else:
             columns_content += str(value)
 
-    # parsear columns
+    # gerar query com dados do site
     query = "SELECT " + columns_content +  " FROM " + table
-    print("QUERY: {}".format(query))
 
-    cursor.execute(query)
-    result = cursor.fetchall()
+    text = colored('QUERY: ', 'yellow', attrs=['reverse', 'blink'])
+    print(text + query)
+
+    results = []
+    try:
+        # tentar executar a query
+        cursor.execute(query)
+        result = cursor.fetchall()
+
+        # exibir resultado
+        print("Resultado do SELECT: ")
+        for value in result:
+            results.append(str(value))
+            print(value, end=", ")
+        print("\n")
+        return results
+    except Exception as error:
+        # caso SELECT dê erro, exibir erro e retornar lista vazia
+        text = colored('ERRO:', 'yellow', attrs=['reverse', 'blink'])
+        print("")
+        print(str(error))
+        return results
+
+
+@eel.expose
+def insert(table, columns, values):
+    global connection
+    global cursor
+
+    print("Executando INSERT...")
+
+    # parsear dados
+    values_content = ""
+    for index, value in enumerate(values):
+        if (index < len(values) - 1):
+            values_content += str(value) + ", "
+        else:
+            values_content += str(value)
+
+    # gerar query com dados do site
+    query = "INSERT INTO" + table + "VALUES (" + values_content + ");"
+
+    text = colored('QUERY: ', 'yellow', attrs=['reverse', 'blink'])
+    print(text + query)
+
+    try:
+        # tentar executar a query
+        cursor.execute(query)
+        result =  cur.fetchone()[0]
+    except Exception as error:
+        # em caso de erro, retornar -1 para alertar no site que deu erro
+        # exibir erro no terminal
+        text = colored('ERRO:', 'yellow', attrs=['reverse', 'blink'])
+        print("")
+        print(str(error))
+        result = -1 # deu errado, alertar no site
 
     # formatar esse resultado
-    results = []
-    print("Resultado do SELECT: ")
-    for value in result:
-        results.append(str(value))
-        print(value, end=", ")
-    print("\n")
+    return result
 
-    return results
+
+@eel.expose
+def delete(table, column, value):
+    global connection
+    global cursor
+
+    print("Executando DELETE...")
+
+    # gerar query com dados do site
+    query = "DELETE FROM " + table + "WHERE " + str(column) + "=" + str(value)
+
+    text = colored('QUERY: ', 'yellow', attrs=['reverse', 'blink'])
+    print(text + query)
+
+    try:
+        # tentar executar a query
+        cursor.execute(query)
+        result = 1
+    except Exception as error:
+        # em caso de erro, retornar -1 para alertar no site que deu erro
+        # exibir erro no terminal
+        text = colored('ERRO:', 'yellow', attrs=['reverse', 'blink'])
+        print("")
+        print(str(error))
+        result = -1 # deu errado, alertar no site
+
+    # formatar esse resultado
+    return result
+
+
+@eel.expose
+def update(table, column, value, condition_column, condition_value):
+    global connection
+    global cursor
+
+    print("Executando UPDATE...")
+
+    # gerar query com dados do site
+    query = "UPDATE " + table + "SET " + str(column) + "=" + str(value) + " WHERE " + str(condition_column) + "=" + str(condition_value)
+
+    text = colored('QUERY: ', 'yellow', attrs=['reverse', 'blink'])
+    print(text + query)
+
+    try:
+        # tentar executar a query
+        cursor.execute(query)
+        result = 1
+    except Exception as error:
+        # em caso de erro, retornar -1 para alertar no site que deu erro
+        # exibir erro no terminal
+        text = colored('ERRO:', 'yellow', attrs=['reverse', 'blink'])
+        print("")
+        print(str(error))
+        result = -1 # deu errado, alertar no site
+
+    # formatar esse resultado
+    return result
 
 
 def setup(filename='database.ini', section='postgresql'):
@@ -188,6 +290,9 @@ def main():
     except (Exception) as e:
         text = colored('ERRO:', 'red', attrs=['reverse', 'blink'])
         print('\n' + text + str(e))
+
+    # fechar conexão com o banco ao terminar
+    cur.close()
 
 
 if __name__ == '__main__':

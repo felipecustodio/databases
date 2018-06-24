@@ -255,7 +255,6 @@ def run_sql(filename):
                 print('\n' + str(error))
 
 def main():
-
     global connection
     global cursor
 

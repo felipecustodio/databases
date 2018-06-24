@@ -289,7 +289,7 @@
                                             Para alterar, basta colocar o Númeo do cardápio e Food-truck comida e as novas informações.
                                         </div>
                                     </div>
-                                    <button type="submit" onClick=" () => {} " class="btn btn-info btn-fill pull-right">Alterar</button>
+                                    <button type="submit" onClick="update_tuplas()" class="btn btn-info btn-fill pull-right">Alterar</button>
                                     <div class="clearfix"></div>
                                 </form>
                             </div>
@@ -358,6 +358,26 @@
 
 			if(success == -1){
 				alert("Erro ao deletar o registro, tente novamente");
+			}
+
+		}
+
+        async function update_tuplas(){
+
+			let numCard = document.getElementById("numCard_alt_com").value;
+			let food = document.getElementById("food_alt_com").value;
+			let name = document.getElementById("nome_alt_com").value;
+			let valor = document.getElementById("valor_alt_com").value;
+
+			columns = ["NRO_CARDAPIO", "PLACA", "NOME", "VALOR"];
+			values = [numCard, food, name, valor];
+			col_cond = ["NRO_CARDAPIO", "PLACA"];
+			value_cond = [numCard, food];
+
+			let success = await eel.update("COMIDA", columns, values, col_cond, value_cond)();
+
+			if(success == -1){
+				alert("Erro ao atualizar o registro, tente novamente");
 			}
 
 		}

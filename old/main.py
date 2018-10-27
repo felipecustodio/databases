@@ -2,40 +2,51 @@
 # -*- coding: utf-8 -*-
 
 """
-SCC0540 - Bases de Dados - 2018/2
+SCC0240 - Bases de Dados - 2018/1
 ICMC - USP
 Profa. Dra. Elaine Parros M. de Sousa
 
 Alunos:
 Felipe Scrochio Custódio - 9442688
+Gabriel Henrique Campos Scalici - 9292970
+Danilo Moraes Costa - 8921972
 Henrique Martins Loschiavo - 8936972
 """
 
 try:
-    import psycopg2 # postgres
+    import psycopg2
+    import eel
     from termcolor import colored
-    from pyfiglet import Figlet
     from configparser import ConfigParser
     import sys
 except Exception as e:
     print(e)
     print("Pacotes não instalados.")
-    print("Instale os pacotes necessários.")
+    print("Instale os pacotes necessários com o seguinte comando:")
     print("pip install -r requirements.txt")
+
+# https://github.com/ChrisKnott/Eel
+# http://www.postgresqltutorial.com/postgresql-python/
 
 # conexão ao banco de dados
 connection = None
 cursor = None
 
+
 # Requisições CRUD
+
+
 # SELECT
+@eel.expose
 def select(table, columns):
-    """ Requisição GET - SELECT """
     global connection
     global cursor
 
+    """ SELECT """
+
     print("Executando SELECT...")
     # "SELECT columns[0] columns[1] ... FROM table"
+
     # parsear colunas
     columns_content = ""
     for index, value in enumerate(columns):
@@ -44,7 +55,7 @@ def select(table, columns):
         else:
             columns_content += str(value)
 
-    # gerar query
+    # gerar query com dados do site
     query = "SELECT " + columns_content + " FROM " + table
 
     text = colored('QUERY:', 'yellow', attrs=['reverse', 'blink'])
@@ -72,10 +83,12 @@ def select(table, columns):
 
 
 # INSERT
+@eel.expose
 def insert(table, values):
-    """ Requisição CRUD - INSERT """
     global connection
     global cursor
+
+    """ Requisição CRUD - INSERT """
 
     print("Executando INSERT...")
 
@@ -87,7 +100,7 @@ def insert(table, values):
         else:
             values_content += "'" + str(value) + "'"
 
-    # gerar query
+    # gerar query com dados do site
     query = "INSERT INTO " + table + " VALUES (" + values_content + ");"
 
     text = colored('QUERY:', 'yellow', attrs=['reverse', 'blink'])
@@ -98,25 +111,27 @@ def insert(table, values):
         cursor.execute(query)
         result = 1
     except Exception as error:
-        # em caso de erro, retornar -1
+        # em caso de erro, retornar -1 para alertar no site que deu erro
         # exibir erro no terminal
         text = colored('ERRO:', 'yellow', attrs=['reverse', 'blink'])
         print("")
         print(str(error))
-        result = -1  # deu errado
+        result = -1  # deu errado, alertar no site
 
     # formatar esse resultado
     return result
 
 
 # DELETE
+@eel.expose
 def delete(table, columns, values):
-    """ Requisição CRUD - DELETE """
     global connection
     global cursor
 
+    """ Requisição CRUD - DELETE """
+
     print("Executando DELETE...")
-    # gerar query
+    # gerar query com dados do site
     query = "DELETE FROM " + table + " WHERE " + str(columns[0]) + "=" + "'" + str(values[0]) + "'"
     # caso haja mais de uma condição, adicioná-las
     if (len(columns) > 1):
@@ -132,22 +147,24 @@ def delete(table, columns, values):
         cursor.execute(query)
         result = 1
     except Exception as error:
-        # em caso de erro, retornar -1
+        # em caso de erro, retornar -1 para alertar no site que deu erro
         # exibir erro no terminal
         text = colored('ERRO:', 'yellow', attrs=['reverse', 'blink'])
         print("")
         print(str(error))
-        result = -1  # deu errado
+        result = -1  # deu errado, alertar no site
 
     # formatar esse resultado
     return result
 
 
 # UPDATE
+@eel.expose
 def update(table, column, value, condition_columns, condition_values):
-    """ Requisição CRUD - UPDATE """
     global connection
     global cursor
+
+    """ Requisição CRUD - UPDATE """
 
     print("Executando UPDATE...")
 
@@ -160,7 +177,7 @@ def update(table, column, value, condition_columns, condition_values):
         else:
             updates += str(column[index]) + "=" + "'" + str(value[index]) + "'"
 
-    # gerar query
+    # gerar query com dados do site
     query = "UPDATE " + table + " SET " + updates + " WHERE " + condition_columns[0] + "=" + "'" + condition_values[0] + "'"
     # caso haja mais de uma condição, adicioná-las
     if (len(condition_columns) > 1):
@@ -175,21 +192,23 @@ def update(table, column, value, condition_columns, condition_values):
         cursor.execute(query)
         result = 1
     except Exception as error:
-        # em caso de erro, retornar -1
+        # em caso de erro, retornar -1 para alertar no site que deu erro
         # exibir erro no terminal
         text = colored('ERRO:', 'yellow', attrs=['reverse', 'blink'])
         print("")
         print(str(error))
-        result = -1  # deu errado
+        result = -1  # deu errado, alertar no site
 
     # formatar esse resultado
     return result
 
 
+@eel.expose
 def run_sql(filename):
-    """ Executa todos os comandos de um arquivo .sql """
     global connection
     global cursor
+
+    """ Executa todos os comandos de um arquivo .sql """
 
     # ler arquivo SQL em um único buffer
     file = open(filename, 'r')
@@ -214,37 +233,67 @@ def run_sql(filename):
                 print('\n' + str(error))
 
 
-def setup():
-    """ Configura a conexão ao PostgreSQL """
-    """ Utiliza arquivo de configuração database.ini """
+@eel.expose
+def home_queries(filename):
     global connection
     global cursor
 
+    """ Executa as consultas da página inicial (queries complexas) """
+
+    # ler arquivo SQL em um único buffer
+    file = open(filename, 'r')
+    sql = file.read()
+    file.close()
+
+    text = colored('Executando ' + filename, 'green')
+    print(text)
+
+    # executar consulta
+    results = []
+    try:
+        cursor.execute(sql)
+        result = cursor.fetchall()
+        print("Resultado da consulta " + filename + ": ")
+        print(result)
+        for value in result:
+            results.append(str(value))
+        return results
+    except(Exception, psycopg2.DatabaseError) as error:
+        text = colored('ERRO:', 'yellow', attrs=['reverse', 'blink'])
+        print('\n' + text + sql)
+        print('\n' + str(error))
+        return -1
+
+
+def setup(filename='database.ini', section='postgresql'):
+    global connection
+    global cursor
+
+    """ Configura a conexão ao PostgreSQL """
+    """ Utiliza arquivo de configuração database.ini """
+
     parser = ConfigParser()
-    parser.read('database.ini')
+    parser.read(filename)
 
     db = {}
-    if parser.has_section('postgresql'):
-        params = parser.items('postgresql')
+    if parser.has_section(section):
+        params = parser.items(section)
         for param in params:
             db[param[0]] = param[1]
     return db
 
 
 def connect():
-    """ Inicia a conexão ao PostgreSQL """
     global connection
     global cursor
 
-    text = colored('Banco de Dados PostgreSQL', 'green', attrs=['reverse', 'blink'])
-    print(text)
+    """ Cria a conexão ao PostgreSQL """
 
     try:
         # configurar os parâmetros de conexão
         params = setup()
         print('Conectando ao banco de dados PostgreSQL...')
         connection = psycopg2.connect(**params)
-        
         # sempre commitar após um comando, assim erros podem ser ignorados, porém exibidos
         connection.autocommit = True
 
@@ -252,10 +301,14 @@ def connect():
         cursor = connection.cursor()
 
         # conexão bem sucedida: mostrar versão
-        text = colored('SUCESSO:', 'green', attrs=['reverse', 'blink'])
-        print(text + " Conexão ao banco de dados feita com sucesso. Bem-vindo!")
+        text = colored('Banco de Dados PostgreSQL', 'green', attrs=['reverse', 'blink'])
+        print(text)
+
         cursor.execute('SELECT version()')
-        print('Versão: ' + str(cursor.fetchone()))
+        print("Conexão feita com sucesso. Bem-vindo!")
+        print(cursor.fetchone())
+
+        return connection, cursor
 
     except (Exception, psycopg2.DatabaseError) as error:
         text = colored('ERRO:', 'yellow', attrs=['reverse', 'blink'])
@@ -268,11 +321,19 @@ def connect():
 def main():
     global connection
     global cursor
-    figlet = Figlet(font='cosmic')
+
+    web_app_options = {
+        'mode': "chrome-app",
+        'port': 8000,
+        # modo incognito evita problemas com cache
+        'chromeFlags': ["--incognito"]
+    }
+
+    # inicializar servidor web local
+    eel.init('gui')
 
     # conectar ao banco de dados
-    connect()
-    print("Limpando banco de dados...")
+    connection, cursor = connect()
     run_sql('drop.sql')
 
     print("Inicializando as tabelas do banco de dados...")
@@ -281,12 +342,19 @@ def main():
     print("Populando o banco de dados com tuplas iniciais...")
     run_sql('insert.sql')
 
-    print("Inicializando interface de linha de comando...")
-    print()
-    print (figlet.renderText('TUSCA'))
+    # abrir interface gráfica
+    print("Abrindo a interface gráfica...")
+    text = colored('SEJA BEM-VINDO A NEVERLAND!', 'yellow', attrs=['reverse', 'blink'])
+    print('\n' + text)
+    print("Navegue pelo site para conferir as funcionalidades.\n")
+
+    try:
+        eel.start('index.html', options=web_app_options)
+    except (Exception) as e:
+        text = colored('ERRO:', 'red', attrs=['reverse', 'blink'])
+        print('\n' + text + str(e))
 
     # fechar conexão com o banco ao terminar
-    print("Encerrando conexão...")
     cursor.close()
 
 

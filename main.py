@@ -12,16 +12,37 @@ Henrique Martins Loschiavo - 8936972
 """
 
 try:
+    # database
     import psycopg2 # postgres
-    from termcolor import colored
-    from pyfiglet import Figlet
-    from configparser import ConfigParser
+    from configparser import ConfigParser # .ini parser
+    import os
     import sys
+    # cli
+    import click
+    from pyfiglet import Figlet
+    from termcolor import colored
+    from prompt_toolkit import prompt
+    from prompt_toolkit.history import FileHistory
+    from prompt_toolkit.auto_suggest import AutoSuggestFromHistory
+    from prompt_toolkit.contrib.completers import WordCompleter
+    from pygments.lexers.sql import SqlLexer
 except Exception as e:
     print(e)
     print("Pacotes não instalados.")
     print("Instale os pacotes necessários.")
-    print("pip install -r requirements.txt")
+    print("pip install --user -r requirements.txt")
+
+# cli
+figlet = Figlet(font='roman')
+title = figlet.renderText("TUSCA")
+
+SQLCompleter = WordCompleter(['SELECT', 'FROM', 'INSERT', 'UPDATE', 'DELETE', 'DROP'],
+                             ignore_case=True)
+
+menu = {
+    1: "Realizar consulta",
+    2: "Sair"
+}
 
 # conexão ao banco de dados
 connection = None
@@ -47,7 +68,7 @@ def select(table, columns):
     # gerar query
     query = "SELECT " + columns_content + " FROM " + table
 
-    text = colored('QUERY:', 'yellow', attrs=['reverse', 'blink'])
+    text = colored('QUERY:', 'yellow')
     print("\n" + text + " " + query)
 
     results = []
@@ -65,7 +86,7 @@ def select(table, columns):
         return results
     except Exception as error:
         # caso SELECT dê erro, exibir erro e retornar lista vazia
-        text = colored('ERRO:', 'yellow', attrs=['reverse', 'blink'])
+        text = colored('ERRO:', 'yellow')
         print("")
         print(str(error))
         return results
@@ -90,7 +111,7 @@ def insert(table, values):
     # gerar query
     query = "INSERT INTO " + table + " VALUES (" + values_content + ");"
 
-    text = colored('QUERY:', 'yellow', attrs=['reverse', 'blink'])
+    text = colored('QUERY:', 'yellow')
     print("\n" + text + " " + query)
 
     try:
@@ -100,7 +121,7 @@ def insert(table, values):
     except Exception as error:
         # em caso de erro, retornar -1
         # exibir erro no terminal
-        text = colored('ERRO:', 'yellow', attrs=['reverse', 'blink'])
+        text = colored('ERRO:', 'yellow')
         print("")
         print(str(error))
         result = -1  # deu errado
@@ -124,7 +145,7 @@ def delete(table, columns, values):
             if (index > 0):
                 query += " AND " + str(columns[index]) + "=" + "'" + str(values[index]) + "'"
 
-    text = colored('QUERY:', 'yellow', attrs=['reverse', 'blink'])
+    text = colored('QUERY:', 'yellow')
     print("\n" + text + " " + query)
 
     try:
@@ -134,7 +155,7 @@ def delete(table, columns, values):
     except Exception as error:
         # em caso de erro, retornar -1
         # exibir erro no terminal
-        text = colored('ERRO:', 'yellow', attrs=['reverse', 'blink'])
+        text = colored('ERRO:', 'yellow')
         print("")
         print(str(error))
         result = -1  # deu errado
@@ -167,7 +188,7 @@ def update(table, column, value, condition_columns, condition_values):
         for index, value in enumerate(condition_columns, start=1):
             query += " AND " + str(condition_columns[index]) + "=" + "'" + str(condition_values[index]) + "'"
 
-    text = colored('QUERY:', 'yellow', attrs=['reverse', 'blink'])
+    text = colored('QUERY:', 'yellow')
     print("\n" + text + " " + query)
 
     try:
@@ -177,7 +198,7 @@ def update(table, column, value, condition_columns, condition_values):
     except Exception as error:
         # em caso de erro, retornar -1
         # exibir erro no terminal
-        text = colored('ERRO:', 'yellow', attrs=['reverse', 'blink'])
+        text = colored('ERRO:', 'yellow')
         print("")
         print(str(error))
         result = -1  # deu errado
@@ -209,9 +230,23 @@ def run_sql(filename):
             try:
                 cursor.execute(command)
             except(Exception, psycopg2.DatabaseError) as error:
-                text = colored('ERRO:', 'yellow', attrs=['reverse', 'blink'])
+                text = colored('ERRO:', 'yellow')
                 print('\n' + text + command)
                 print('\n' + str(error))
+
+
+def run_query(query):
+    """ Executa uma query SQL """
+    global connection
+    global cursor
+
+    try:
+        cursor.execute(query)
+        result = cursor.fetchall()
+        click.echo_via_pager(result)
+    except(Exception, psycopg2.DatabaseError) as error:
+        text = colored('ERRO: ', 'yellow')
+        click.echo_via_pager('\n' + text + query + '\n' + str(error))
 
 
 def setup():
@@ -236,7 +271,7 @@ def connect():
     global connection
     global cursor
 
-    text = colored('Banco de Dados PostgreSQL', 'green', attrs=['reverse', 'blink'])
+    text = colored('Banco de Dados PostgreSQL', 'green')
     print(text)
 
     try:
@@ -252,39 +287,68 @@ def connect():
         cursor = connection.cursor()
 
         # conexão bem sucedida: mostrar versão
-        text = colored('SUCESSO:', 'green', attrs=['reverse', 'blink'])
+        text = colored('SUCESSO:', 'green')
         print(text + " Conexão ao banco de dados feita com sucesso. Bem-vindo!")
         cursor.execute('SELECT version()')
         print('Versão: ' + str(cursor.fetchone()))
 
     except (Exception, psycopg2.DatabaseError) as error:
-        text = colored('ERRO:', 'yellow', attrs=['reverse', 'blink'])
+        text = colored('ERRO:', 'yellow')
         print(text + " Conexão ao banco de dados PostgreSQL falhou!")
         print("")
         print(str(error))
         sys.exit()
 
 
+def test_connection():
+    try:
+        params = setup()
+        conn = psycopg2.connect(**params)
+        conn.close()
+        return True
+    except:
+        return False
+
+
 def main():
     global connection
     global cursor
-    figlet = Figlet(font='cosmic')
 
     # conectar ao banco de dados
     connect()
+    cursor.execute('SELECT version()')
+    version = str(cursor.fetchone())
+
+    # inicializar banco de dados
     print("Limpando banco de dados...")
     run_sql('drop.sql')
-
     print("Inicializando as tabelas do banco de dados...")
     run_sql('initialize.sql')
-
     print("Populando o banco de dados com tuplas iniciais...")
     run_sql('insert.sql')
-
     print("Inicializando interface de linha de comando...")
     print()
-    print (figlet.renderText('TUSCA'))
 
+    # inicializar interface de linha de comando
+    while True:
+        os.system('clear')
+        print(title)
+        if (test_connection()):
+            print("[ONLINE]", end=" ")
+            print(version.split(',')[0][2:])
+        else:
+            print("[OFFLINE]")
+        for index in menu.keys():
+            print("[" + str(index) + "] " + menu[index])
+        
+        user_input = prompt("\n[SQL] >> ",
+                        history=FileHistory('history.txt'),
+                        auto_suggest=AutoSuggestFromHistory(),
+                        completer=SQLCompleter,
+                        lexer=SqlLexer,
+                        )
+        run_query(user_input)
+ 
     # fechar conexão com o banco ao terminar
     print("Encerrando conexão...")
     cursor.close()

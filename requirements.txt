@@ -1,3 +1,7 @@
+pyfiglet==0.7.6
+Click==7.0
+Eel==0.9.10
+psycopg2==2.7.5
+prompt_toolkit==1.0.14
+Pygments==2.2.0
 termcolor==1.1.0
-Eel==0.9.7
-psycopg2==2.7.4

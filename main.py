@@ -26,6 +26,7 @@ try:
     from prompt_toolkit.auto_suggest import AutoSuggestFromHistory
     from prompt_toolkit.contrib.completers import WordCompleter
     from pygments.lexers.sql import SqlLexer
+    from halo import Halo
 except Exception as e:
     print(e)
     print("Pacotes não instalados.")
@@ -41,8 +42,32 @@ SQLCompleter = WordCompleter(['SELECT', 'FROM', 'INSERT', 'UPDATE', 'DELETE', 'D
 
 menu = {
     1: "Realizar consulta",
-    2: "Sair"
+    2: "Consultas especiais",
+    3: "Sair"
 }
+
+error_tag = colored('[ERRO] ', 'red')
+
+def parse_menu(choice):
+    if (choice == 1):
+        os.system("clear")
+        print("Pressione Q para sair da tela de resultados.")
+        print("Digite sua consulta.")
+        user_input = prompt("\n[SQL] >> ",
+                        history=FileHistory('history.txt'),
+                        auto_suggest=AutoSuggestFromHistory(),
+                        completer=SQLCompleter,
+                        lexer=SqlLexer,
+                        )
+        run_query(user_input)
+    if (choice == 2):
+        print("Listar queries aqui...")
+    if (choice == 3):
+        # fechar conexão com o banco ao terminar
+        print("Encerrando conexão...")
+        cursor.close()
+        prompt("Pressione qualquer tecla para sair.")
+        exit()
 
 # conexão ao banco de dados
 connection = None
@@ -86,9 +111,8 @@ def select(table, columns):
         return results
     except Exception as error:
         # caso SELECT dê erro, exibir erro e retornar lista vazia
-        text = colored('ERRO:', 'yellow')
         print("")
-        print(str(error))
+        print(error_tag + str(error))
         return results
 
 
@@ -121,9 +145,8 @@ def insert(table, values):
     except Exception as error:
         # em caso de erro, retornar -1
         # exibir erro no terminal
-        text = colored('ERRO:', 'yellow')
         print("")
-        print(str(error))
+        print(error_tag + str(error))
         result = -1  # deu errado
 
     # formatar esse resultado
@@ -155,9 +178,8 @@ def delete(table, columns, values):
     except Exception as error:
         # em caso de erro, retornar -1
         # exibir erro no terminal
-        text = colored('ERRO:', 'yellow')
         print("")
-        print(str(error))
+        print(error_tag + str(error))
         result = -1  # deu errado
 
     # formatar esse resultado
@@ -198,9 +220,8 @@ def update(table, column, value, condition_columns, condition_values):
     except Exception as error:
         # em caso de erro, retornar -1
         # exibir erro no terminal
-        text = colored('ERRO:', 'yellow')
         print("")
-        print(str(error))
+        print(error_tag + str(error))
         result = -1  # deu errado
 
     # formatar esse resultado
@@ -217,8 +238,8 @@ def run_sql(filename):
     sql = file.read()
     file.close()
 
-    text = colored('Executando ' + filename, 'green')
-    print(text)
+    # text = colored('Executando ' + filename, 'green')
+    # print(text)
 
     # obter os comandos separando o arquivo por ';'
     commands = sql.split(';')
@@ -230,8 +251,7 @@ def run_sql(filename):
             try:
                 cursor.execute(command)
             except(Exception, psycopg2.DatabaseError) as error:
-                text = colored('ERRO:', 'yellow')
-                print('\n' + text + command)
+                print('\n' + error_tag + command)
                 print('\n' + str(error))
 
 
@@ -245,8 +265,8 @@ def run_query(query):
         result = cursor.fetchall()
         click.echo_via_pager(result)
     except(Exception, psycopg2.DatabaseError) as error:
-        text = colored('ERRO: ', 'yellow')
-        click.echo_via_pager('\n' + text + query + '\n' + str(error))
+        print('\n' + error_tag + query + '\n' + str(error))
+        prompt()
 
 
 def setup():
@@ -264,7 +284,6 @@ def setup():
         for param in params:
             db[param[0]] = param[1]
     return db
-
 
 def connect():
     """ Inicia a conexão ao PostgreSQL """
@@ -293,8 +312,7 @@ def connect():
         print('Versão: ' + str(cursor.fetchone()))
 
     except (Exception, psycopg2.DatabaseError) as error:
-        text = colored('ERRO:', 'yellow')
-        print(text + " Conexão ao banco de dados PostgreSQL falhou!")
+        print(error_tag + " Conexão ao banco de dados PostgreSQL falhou!")
         print("")
         print(str(error))
         sys.exit()
@@ -320,38 +338,34 @@ def main():
     version = str(cursor.fetchone())
 
     # inicializar banco de dados
-    print("Limpando banco de dados...")
-    run_sql('drop.sql')
-    print("Inicializando as tabelas do banco de dados...")
-    run_sql('initialize.sql')
-    print("Populando o banco de dados com tuplas iniciais...")
-    run_sql('insert.sql')
-    print("Inicializando interface de linha de comando...")
-    print()
+    with Halo(text='Inicializando banco...', spinner='dots'):
+        run_sql('drop.sql')
+        run_sql('initialize.sql')
+        run_sql('insert.sql')
+
 
     # inicializar interface de linha de comando
     while True:
         os.system('clear')
         print(title)
         if (test_connection()):
-            print("[ONLINE]", end=" ")
+            status = colored('[ONLINE]', 'green')
+            print(status, end=" ")
             print(version.split(',')[0][2:])
         else:
-            print("[OFFLINE]")
+            status = colored('[OFFLINE]', 'red')
+            print(status)
         for index in menu.keys():
             print("[" + str(index) + "] " + menu[index])
         
-        user_input = prompt("\n[SQL] >> ",
-                        history=FileHistory('history.txt'),
-                        auto_suggest=AutoSuggestFromHistory(),
-                        completer=SQLCompleter,
-                        lexer=SqlLexer,
-                        )
-        run_query(user_input)
- 
-    # fechar conexão com o banco ao terminar
-    print("Encerrando conexão...")
-    cursor.close()
+        user_input = prompt(">> ")
+        try:
+            int(user_input)
+        except Exception as e:
+            print("Opção inválida!")
+            prompt("Pressione ENTER para continuar.")
+        else:
+            parse_menu(int(user_input))
 
 
 if __name__ == '__main__':

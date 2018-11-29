@@ -46,9 +46,20 @@ menu = {
     3: "Sair"
 }
 
+menu_queries = {
+    1: "Quantidade de...",
+    2: "...",
+    3: "...",
+    4: "..."
+}
+
 error_tag = colored('[ERRO] ', 'red')
 
 def parse_menu(choice):
+    if (choice not in menu.keys()):
+        print(error_tag + "Opção inválida")
+        prompt("Pressione ENTER para continuar.")
+
     if (choice == 1):
         os.system("clear")
         print("Pressione Q para sair da tela de resultados.")
@@ -60,8 +71,21 @@ def parse_menu(choice):
                         lexer=SqlLexer,
                         )
         run_query(user_input)
+
     if (choice == 2):
-        print("Listar queries aqui...")
+        os.system('clear')
+        print(title)
+        print("Consultas especiais")
+        for index in menu_queries.keys():
+            print("[" + str(index) + "] " + menu_queries[index])
+        user_input = prompt(">> ")
+        
+        if (user_input not in menu_queries.keys()):
+            print(error_tag + "Opção inválida")
+            prompt("Pressione ENTER para continuar.")
+            return
+        
+
     if (choice == 3):
         # fechar conexão com o banco ao terminar
         print("Encerrando conexão...")
@@ -285,6 +309,7 @@ def setup():
             db[param[0]] = param[1]
     return db
 
+
 def connect():
     """ Inicia a conexão ao PostgreSQL """
     global connection
@@ -343,7 +368,6 @@ def main():
         run_sql('initialize.sql')
         run_sql('insert.sql')
 
-
     # inicializar interface de linha de comando
     while True:
         os.system('clear')
@@ -359,11 +383,12 @@ def main():
             print("[" + str(index) + "] " + menu[index])
         
         user_input = prompt(">> ")
+
         try:
             int(user_input)
         except Exception as e:
-            print("Opção inválida!")
-            prompt("Pressione ENTER para continuar.")
+            print(error_tag + "Opção inválida")
+            prompt("Pressione ENTER para continuar. ")
         else:
             parse_menu(int(user_input))
 

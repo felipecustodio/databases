@@ -79,12 +79,12 @@ def parse_menu(choice):
         for index in menu_queries.keys():
             print("[" + str(index) + "] " + menu_queries[index])
         user_input = prompt(">> ")
-        
+
         if (user_input not in menu_queries.keys()):
             print(error_tag + "Opção inválida")
             prompt("Pressione ENTER para continuar.")
             return
-        
+
 
     if (choice == 3):
         # fechar conexão com o banco ao terminar

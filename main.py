@@ -277,6 +277,7 @@ def run_sql(filename):
             except(Exception, psycopg2.DatabaseError) as error:
                 print('\n' + error_tag + command)
                 print('\n' + str(error))
+                prompt("Pressione ENTER para continuar.")
 
 
 def run_query(query):

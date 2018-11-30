@@ -47,10 +47,12 @@ menu = {
 }
 
 menu_queries = {
-    1: "Quantidade de...",
-    2: "...",
-    3: "...",
-    4: "..."
+    1: "Esporte mais jogado, independente do ano",
+    2: "As posições mais jogadas, independente do ano",
+    3: "Partidas apitadas por um arbitro especifico, identificado por nome",
+    4: "Partidas vencidas por um time (CA100)",
+    5: "Partidas vencidas por uma universidade, identificada pela sigla",
+    6: "Os times atuais, retornando time, esporte, seus jogadores, o numero de cada e sua posição no time. Identificados pela sigla da universidade"
 }
 
 error_tag = colored('[ERRO] ', 'red')
@@ -70,7 +72,8 @@ def parse_menu(choice):
                         completer=SQLCompleter,
                         lexer=SqlLexer,
                         )
-        run_query(user_input)
+        if (user_input is not "Q"):
+            run_query(user_input)
 
     if (choice == 2):
         os.system('clear')
@@ -78,13 +81,25 @@ def parse_menu(choice):
         print("Consultas especiais")
         for index in menu_queries.keys():
             print("[" + str(index) + "] " + menu_queries[index])
-        user_input = prompt(">> ")
+        user_input = int(prompt(">> "))
 
         if (user_input not in menu_queries.keys()):
             print(error_tag + "Opção inválida")
             prompt("Pressione ENTER para continuar.")
             return
 
+        if (user_input == 1):
+            run_sql_display("queries/esporte_mais_jogado.sql")
+        elif (user_input == 2):
+            run_sql_display("queries/mais_jogadores_posicao.sql")
+        elif (user_input == 3):
+            run_sql_display("queries/partidas_apitadas_por_arbitro.sql")
+        elif (user_input == 4):
+            run_sql_display("queries/partidas_vencidas_CA100.sql")
+        elif (user_input == 5):
+            run_sql_display("queries/partidas_vencidas_por_universidade.sql")
+        elif (user_input == 6):
+            run_sql_display("queries/time_atual_caaso.sql") 
 
     if (choice == 3):
         # fechar conexão com o banco ao terminar
@@ -254,6 +269,7 @@ def update(table, column, value, condition_columns, condition_values):
 
 def run_sql(filename):
     """ Executa todos os comandos de um arquivo .sql """
+    """ Não exibe resultados """
     global connection
     global cursor
 
@@ -274,6 +290,37 @@ def run_sql(filename):
             command = command + ';'
             try:
                 cursor.execute(command)
+            except(Exception, psycopg2.DatabaseError) as error:
+                print('\n' + error_tag + command)
+                print('\n' + str(error))
+                prompt("Pressione ENTER para continuar.")
+
+
+def run_sql_display(filename):
+    """ Executa todos os comandos de um arquivo .sql """
+    """ Exibe os resultados """
+    global connection
+    global cursor
+
+    # ler arquivo SQL em um único buffer
+    file = open(filename, 'r')
+    sql = file.read()
+    file.close()
+
+    # text = colored('Executando ' + filename, 'green')
+    # print(text)
+
+    # obter os comandos separando o arquivo por ';'
+    commands = sql.split(';')
+
+    # executar todos os comandos
+    for command in commands[:-1]:
+        if (len(command) > 0):
+            command = command + ';'
+            try:
+                cursor.execute(command)
+                result = cursor.fetchall()
+                click.echo_via_pager(result)
             except(Exception, psycopg2.DatabaseError) as error:
                 print('\n' + error_tag + command)
                 print('\n' + str(error))

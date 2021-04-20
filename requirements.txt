@@ -3,5 +3,5 @@ Click==7.0
 Eel==0.9.10
 psycopg2==2.7.5
 prompt_toolkit==1.0.14
-Pygments==2.2.0
+Pygments==2.7.4
 termcolor==1.1.0
